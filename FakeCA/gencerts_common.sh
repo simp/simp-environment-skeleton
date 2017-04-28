@@ -2,7 +2,12 @@
 
 # Common functions for gencerts items.
 
-keydist="`dirname $0`/../site_files/pki_files/files/keydist"
+if [ -z "${KEYDIST_DIR}" ]; then
+  keydist="../site_files/pki_files/files/keydist"
+else
+  keydist=$KEYDIST_DIR
+fi
+
 CA_src='/etc/pki/tls/misc/CA'
 
 export CATOP="`pwd`/demoCA"
@@ -72,11 +77,11 @@ distribute_ca () {
 
   if [ -f $cacerts/$hash.0 ] && [ "`md5sum $cacert | cut -f1 -d' '`" != "`md5sum $cacerts/$hash.0 | cut -f1 -d' '`" ]; then
     echo "Found existing CA cert, preserving....";
-    pushd .;
-    cd $cacerts;
-    suffix=$(( 1 + `ls $hash.* | sort -n | tail -1 | cut -f2 -d'.'` ));
-    mv -f cacert.pem $hash.$suffix;
-    popd;
+    (
+      cd $cacerts;
+      suffix=$(( 1 + `ls $hash.* | sort -n | tail -1 | cut -f2 -d'.'` ));
+      mv -f cacert.pem $hash.$suffix;
+    )
   elif [ -f $cacerts/$hash.0 ]; then
     echo "Existing CA cert does not need to be replaced....";
   else
@@ -85,12 +90,14 @@ distribute_ca () {
 
     cp $cacert $cacerts/cacert_${ca_id}.pem;
 
-    cd $cacerts;
-    ln -s cacert_${ca_id}.pem $hash.0;
-
-    cd -;
+    (
+      cd $cacerts;
+      ln -s cacert_${ca_id}.pem $hash.0;
+    )
   fi
 
-  chmod -R u+rwX,g+rX,o-rwx $keydist;
-  chown -R root.puppet $keydist;
+  if [ "${USER}" == 'root' ] || [ $UID -eq 0 ]; then
+    chmod -R u+rwX,g+rX,o-rwx $keydist;
+    chown -R root.puppet $keydist;
+  fi
 }
