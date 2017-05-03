@@ -96,8 +96,6 @@ cd -
 %config(noreplace) %{prefix}/hieradata/scenarios/poss.yaml
 %config(noreplace) %{prefix}/hieradata/default.yaml
 %config(noreplace) %{prefix}/manifests/site.pp
-%config(noreplace) %{prefix}/hieradata/compliance_profiles/nist_800_53_rev4.yaml
-%config(noreplace) %{prefix}/hieradata/compliance_profiles/disa_stig_el7.yaml
 
 %defattr(0640,root,root,0750)
 %{_datadir}/selinux/*/%{selinux_policy}
