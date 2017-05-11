@@ -21,7 +21,7 @@
 # http://www.puppetmodule.info/github/simp/pupmod-simp-simp_options/master/
 #
 
-simp::scenario: 'idm'
+simp::scenario: 'remote_access'
 
 simp_options::auditd: false
 simp_options::clamav: false

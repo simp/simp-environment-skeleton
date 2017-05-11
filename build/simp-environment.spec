@@ -213,7 +213,7 @@ fi
 
 %changelog
 * Wed May 10 2017 Nick Markowski <nmarkowski@keywcorp.com> - 6.2.2
-- Added an identity management scenario, 'idm'
+- Added an identity management scenario, 'remote_access'
 
 * Thu Apr 20 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.1
 - Updated the compliance maps based on recent code changes.
