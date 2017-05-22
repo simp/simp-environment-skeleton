@@ -1,0 +1,7 @@
+FakeCA/.ca_run_lock
+FakeCA/CA
+FakeCA/cacertkey
+FakeCA/demoCA
+FakeCA/output
+FakeCA/working
+site_files

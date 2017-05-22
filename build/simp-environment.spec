@@ -6,7 +6,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.2
+Version: 6.3.0
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -212,6 +212,9 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
+* Mon May 22 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.3.0
+- Allow FakeCA to take hosts at the command line
+
 * Wed May 10 2017 Nick Markowski <nmarkowski@keywcorp.com> - 6.2.2
 - Added a 'remote_access' scenario
 
