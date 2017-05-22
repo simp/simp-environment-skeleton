@@ -96,8 +96,6 @@ cd -
 %config(noreplace) %{prefix}/hieradata/scenarios/poss.yaml
 %config(noreplace) %{prefix}/hieradata/default.yaml
 %config(noreplace) %{prefix}/manifests/site.pp
-%config(noreplace) %{prefix}/hieradata/compliance_profiles/nist_800_53_rev4.yaml
-%config(noreplace) %{prefix}/hieradata/compliance_profiles/disa_stig_el7.yaml
 
 %defattr(0640,root,root,0750)
 %{_datadir}/selinux/*/%{selinux_policy}
@@ -214,9 +212,14 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
-* Thu Apr 20 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.3.0
-- Updated the compliance maps based on recent code changes.
+* Mon May 22 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.3.0
 - Allow FakeCA to take hosts at the command line
+
+* Wed May 10 2017 Nick Markowski <nmarkowski@keywcorp.com> - 6.2.2
+- Added a 'remote_access' scenario
+
+* Thu Apr 20 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.1
+- Updated the compliance maps based on recent code changes.
 
 * Mon Apr 03 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.0
 - Move FakeCA down into /var/simp/environment/simp where it can be
