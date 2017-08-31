@@ -6,7 +6,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.2
+Version: 6.2.3
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -212,6 +212,9 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
+* Thu Aug 31 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.2.3
+- Fleshed out the houstgroup documentation with a practical example
+
 * Wed May 10 2017 Nick Markowski <nmarkowski@keywcorp.com> - 6.2.2
 - Added a 'remote_access' scenario
 

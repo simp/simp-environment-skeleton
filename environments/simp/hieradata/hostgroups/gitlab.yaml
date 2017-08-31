@@ -1,0 +1,25 @@
+---
+
+# This is an example hostgroup hiera file for hosts in the 'gitlab' hostgroup.
+# Any parameters added here will be applied to every system as defined by the
+# hostgroup variable.
+#
+# See `manifests/site.pp` for an example use case for the hostgroup variable.
+#
+# This is the place to include classes or configuration that is specific to
+# nodes in this group. For example, to manage gitlab on these machines:
+#
+# ```
+# classes:
+#   - simp_gitlab
+#
+# simp_gitlab::gitlab_options:
+#   user:
+#     username: testuser
+#     group: testgroup
+# ```
+#
+#
+# Hiera crashes if there are empty files, so
+# please remove the following line if you use this file
+this_is_another_example_key: 'that does nothing'
