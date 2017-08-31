@@ -6,7 +6,7 @@ require 'yaml'
 Simp::Rake::Pkg.new( File.dirname( __FILE__ ) )
 
 task :yaml_validate do
-  Dir.glob('**/*.{yaml,yml}').each do |f|
+  Dir.glob('environments/simp/**/*.{yaml,yml}').each do |f|
     y = YAML.load_file(f)
     if (y.nil?) or (y == false)
       abort("File #{f} is invalid")
@@ -15,7 +15,7 @@ task :yaml_validate do
 end
 
 task :pp_validate do
-  Dir.glob('**/*.pp') do |f|
+  Dir.glob('environments/simp/**/*.pp') do |f|
     `puppet parser validate #{f}`
   end
 end
