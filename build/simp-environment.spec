@@ -213,7 +213,7 @@ fi
 
 %changelog
 * Thu Aug 31 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.2.3
-- Fleshed out the houstgroup documentation with a practical example
+- Fleshed out the hostgroup documentation with a practical example
 
 * Wed May 10 2017 Nick Markowski <nmarkowski@keywcorp.com> - 6.2.2
 - Added a 'remote_access' scenario
