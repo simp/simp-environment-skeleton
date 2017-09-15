@@ -212,10 +212,10 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
-* Thu Aug 31 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.2.3
+* Thu Aug 31 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.2.1
 - Fleshed out the hostgroup documentation with a practical example
 
-* Wed May 10 2017 Nick Markowski <nmarkowski@keywcorp.com> - 6.2.2
+* Wed May 10 2017 Nick Markowski <nmarkowski@keywcorp.com> - 6.2.1
 - Added a 'remote_access' scenario
 
 * Thu Apr 20 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.1
