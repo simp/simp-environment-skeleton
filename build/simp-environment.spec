@@ -6,7 +6,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.2
+Version: 6.2.4
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -212,9 +212,15 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
-* Fri Sep 22 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.2-0
+* Fri Sep 22 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.4-0
 - Fix changelog/version mismatch which resulted in the release of
   a 6.2.1 tag for which the RPM version was erroneously 6.2.3.
+  
+* Fri Sep 22 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.3-0
+- Version erroneously tagged as 6.2.1.
+  
+* Fri Sep 22 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.2-0
+- Untagged version.
 
 * Thu Aug 31 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.2.1
 - Fleshed out the hostgroup documentation with a practical example
