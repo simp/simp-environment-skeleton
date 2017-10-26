@@ -1,4 +1,31 @@
-%global selinux_policyver %(%{__sed} -e %'s,.*selinux-policy-\\([^/]*\\)/.*,\\1,' %/usr/share/selinux/devel/policyhelp 2>/dev/null || echo 0.0.0)
+# policycoreutils_version and selinux_policy_version are specifically set
+# to the *earliest* version of these packages present in these major releases.
+#
+# This is required since SELinux policies are forward compatible during a major
+# release but not necessarily backwards compatible and we want to ensure
+# maximum package compatibility.
+#
+# Use environment variable SIMP_ENV_NO_SELINUX_DEPS to ignore this
+# and use the latest.  (This is good when building test ISOs that
+# from a local environment, instead of a docker build, where a later
+# version of selinux is installed.)
+%define ignore_selinux_reqs %{getenv:SIMP_ENV_NO_SELINUX_DEPS}
+
+# Only run the following if the environment variable is *not* defined
+%if "%{ignore_selinux_reqs}" == ""
+  %if 0%{?rhel} == 6 || 0%{?rhel} == 7
+    %if 0%{?rhel} == 6
+      %global policycoreutils_version 2.0.83
+      %global selinux_policy_version 3.7.19
+    %endif
+
+    %if 0%{?rhel} == 7
+      %global policycoreutils_version 2.2.5
+      %global selinux_policy_version 3.12.1
+    %endif
+  %endif
+%endif
+
 %global selinux_variants targeted
 
 %define selinux_policy_short simp-environment
@@ -6,7 +33,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.4
+Version: 6.2.5
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -26,13 +53,39 @@ Requires(post): coreutils
 Requires(post): glibc-common
 Requires(post): pam
 Requires(post): libsemanage
-Requires(post): selinux-policy >= %{selinux_policyver}
-Requires(post): selinux-policy-targeted >= %{selinux_policyver}
+%if 0%{?selinux_policy_version:1}
+Requires(post): selinux-policy >= %{selinux_policy_version}
+Requires(post): selinux-policy-targeted >= %{selinux_policy_version}
+%else
+Requires(post): selinux-policy
+Requires(post): selinux-policy-targeted
+%endif
+
 Requires(postun): policycoreutils
 BuildRequires: selinux-policy-targeted
-%if "%{?rhel}%{!?rhel:0}" > "6"
+%if 0%{?selinux_policy_version:1}
+BuildRequires: policycoreutils == %{policycoreutils_version}
+BuildRequires: policycoreutils-python == %{policycoreutils_version}
+BuildRequires: selinux-policy == %{selinux_policy_version}
+BuildRequires: selinux-policy-devel == %{selinux_policy_version}
+  %if 0%{?rhel} == 7
+BuildRequires: policycoreutils-devel == %{policycoreutils_version}
+  %endif
+%else
+BuildRequires: policycoreutils
+BuildRequires: policycoreutils-python
+BuildRequires: selinux-policy
 BuildRequires: selinux-policy-devel
+  %if 0%{?rhel} == 7
+BuildRequires: policycoreutils-devel
+BuildRequires: selinux-policy-targeted
+  %endif
 %endif
+
+
+#%if "%{?rhel}%{!?rhel:0}" > "6"
+#BuildRequires: selinux-policy-devel
+#%endif
 Provides: simp-bootstrap = %{version}-%{release}
 Provides: simp_bootstrap = %{version}-%{release}
 Obsoletes: simp-bootstrap < %{version}-%{release}
@@ -112,6 +165,8 @@ cd -
 PATH=/opt/puppetlabs/bin:$PATH
 export PATH
 
+# Build an load policy to set selinux context to enable puppet
+# to read from /var/simp directories.
 /usr/sbin/semodule -n -i %{_datadir}/selinux/packages/%{selinux_policy}
 if /usr/sbin/selinuxenabled; then
   /usr/sbin/load_policy
@@ -212,13 +267,18 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
+* Thu Oct 26 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.5-0
+- included simp-rsync selinux policy
+- update simp-environment selinux policy to ensure rsync
+  file contexts are not overwritten by it.
+
 * Fri Sep 22 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.4-0
 - Fix changelog/version mismatch which resulted in the release of
   a 6.2.1 tag for which the RPM version was erroneously 6.2.3.
-  
+
 * Fri Sep 22 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.3-0
 - Version erroneously tagged as 6.2.1.
-  
+
 * Fri Sep 22 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.2-0
 - Untagged version.
 
