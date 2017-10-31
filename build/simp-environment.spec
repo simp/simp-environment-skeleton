@@ -268,9 +268,14 @@ fi
 
 %changelog
 * Thu Oct 26 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.5-0
-- included simp-rsync selinux policy
-- update simp-environment selinux policy to ensure rsync
+- selinux policy in module simp-environment was changing settings on rsync files not in the
+  simp environment and removing their selinux context.  This caused DNS, DHCP to fail 
+  if they were running in an enviroment by a name other then simp.
+- moved selinux policy to simp-environment module and had simp rsync require this module
+  so the selinux policy for /var/simp directory would be in one spot.
   file contexts are not overwritten by it.
+- updated the policy so it would explicitly set the context for files in simp environment and
+  not overwrite settings that were not explicitly set.
 
 * Fri Sep 22 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.4-0
 - Fix changelog/version mismatch which resulted in the release of
