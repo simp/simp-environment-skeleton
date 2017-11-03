@@ -92,5 +92,5 @@ distribute_ca () {
   fi
 
   chmod -R u+rwX,g+rX,o-rwx $keydist;
-  chown -R root.puppet $keydist;
+  chown -R root.`puppet config print group 2>/dev/null` $keydist;
 }

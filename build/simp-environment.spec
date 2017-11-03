@@ -33,7 +33,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.5
+Version: 6.2.6
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -81,7 +81,6 @@ BuildRequires: policycoreutils-devel
 BuildRequires: selinux-policy-targeted
   %endif
 %endif
-
 
 #%if "%{?rhel}%{!?rhel:0}" > "6"
 #BuildRequires: selinux-policy-devel
@@ -134,13 +133,13 @@ cd -
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 
 %files
-%defattr(0640,root,puppet,0750)
+%defattr(0640,root,root,0750)
 %{prefix}
-%attr(0750,puppet,puppet) %{prefix}/simp_autofiles
-%attr(0750,root,puppet) %{_var}/simp/environments/simp/site_files
-%attr(0750,root,puppet) %{_var}/simp/environments/simp/site_files/krb5_files
-%attr(0750,root,puppet) %{_var}/simp/environments/simp/site_files/krb5_files/files
-%attr(0750,root,puppet) %{_var}/simp/environments/simp/site_files/krb5_files/files/keytabs
+%attr(0750) %{prefix}/simp_autofiles
+%attr(0750) %{_var}/simp/environments/simp/site_files
+%attr(0750) %{_var}/simp/environments/simp/site_files/krb5_files
+%attr(0750) %{_var}/simp/environments/simp/site_files/krb5_files/files
+%attr(0750) %{_var}/simp/environments/simp/site_files/krb5_files/files/keytabs
 %config(noreplace) %{prefix}/environment.conf
 %config(noreplace) %{prefix}/hieradata/hosts/puppet.your.domain.yaml
 %config(noreplace) %{prefix}/hieradata/hostgroups/default.yaml
@@ -150,7 +149,6 @@ cd -
 %config(noreplace) %{prefix}/hieradata/default.yaml
 %config(noreplace) %{prefix}/manifests/site.pp
 
-%defattr(0640,root,root,0750)
 %{_datadir}/selinux/*/%{selinux_policy}
 /usr/share/simp/FakeCA
 %{_var}/simp/environments/simp/FakeCA
@@ -161,9 +159,29 @@ cd -
 %attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/gencerts_nopass.sh
 %attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/usergen_nopass.sh
 
+%pre
+
+# Make sure we actually have a working puppet installation and fail otherwise
+puppet_user=`puppet config print user 2> /dev/null`
+
+if [ -z "${puppet_user}" ]; then
+  echo "Error: Could not determine Puppet User, please check your Puppet installation"
+  exit 1;
+fi
+
 %post
 PATH=/opt/puppetlabs/bin:$PATH
 export PATH
+
+# Set file permissions correctly on either POSS or PE through introspection
+puppet_user=`puppet config print user 2> /dev/null`
+puppet_group=`puppet config print group 2> /dev/null`
+
+chown -R ${puppet_user}:${puppet_group} %{prefix}/simp_autofiles
+chgrp ${puppet_group} %{prefix}/environment.conf
+chgrp -R ${puppet_group} %{prefix}/hieradata
+chgrp -R ${puppet_group} %{prefix}/manifests
+chgrp -R ${puppet_group} %{_var}/simp/environments/simp/site_files
 
 # Build an load policy to set selinux context to enable puppet
 # to read from /var/simp directories.
@@ -182,9 +200,9 @@ fi
 
 chmod 2770 %{prefix}
 
-codedir=`puppet config print codedir`
+codedir=`puppet config print codedir 2> /dev/null`
 if [ ! -d $codedir ]; then
-  codedir=`puppet config print confdir`
+  codedir=`puppet config print confdir 2> /dev/null`
 fi
 
 if [ ! -a "${codedir}/environments/production" ]; then
@@ -267,6 +285,11 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
+* Fri Nov 03 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.6-0
+- Ensure that FakeCA works properly with Puppet Enterprise
+- Ensure that the RPM installation permissions work properly with Puppet
+  Enterprise
+
 * Thu Oct 26 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.5-0
 - selinux policy in module simp-environment was changing settings on rsync files not in the
   simp environment and removing their selinux context.  This caused DNS, DHCP to fail 
