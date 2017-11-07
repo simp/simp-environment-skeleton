@@ -160,6 +160,8 @@ cd -
 %attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/usergen_nopass.sh
 
 %pre
+PATH=/opt/puppetlabs/bin:$PATH
+export PATH
 
 # Make sure we actually have a working puppet installation and fail otherwise
 puppet_user=`puppet config print user 2> /dev/null`
