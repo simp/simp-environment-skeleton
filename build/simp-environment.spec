@@ -135,11 +135,11 @@ cd -
 %files
 %defattr(0640,root,root,0750)
 %{prefix}
-%attr(0750) %{prefix}/simp_autofiles
-%attr(0750) %{_var}/simp/environments/simp/site_files
-%attr(0750) %{_var}/simp/environments/simp/site_files/krb5_files
-%attr(0750) %{_var}/simp/environments/simp/site_files/krb5_files/files
-%attr(0750) %{_var}/simp/environments/simp/site_files/krb5_files/files/keytabs
+%attr(0750,-,-) %{prefix}/simp_autofiles
+%attr(0750,-,-) %{_var}/simp/environments/simp/site_files
+%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/krb5_files
+%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/krb5_files/files
+%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/krb5_files/files/keytabs
 %config(noreplace) %{prefix}/environment.conf
 %config(noreplace) %{prefix}/hieradata/hosts/puppet.your.domain.yaml
 %config(noreplace) %{prefix}/hieradata/hostgroups/default.yaml
@@ -331,7 +331,7 @@ fi
   as these parameters are managed by 'simp config'.
 
 
-* Thu Mar 31 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.0
+* Fri Mar 31 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.0
 - Remove the unnecessary class includes from the EL6-specific hieradata
 - The appropriate class includes have been moved into the 'simp' and
   'simp-lite' scenarios in the simp module
