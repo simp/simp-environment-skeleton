@@ -33,7 +33,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.6
+Version: 6.2.7
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -287,6 +287,10 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
+* Fri Nov 17 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.7-0
+- Enable the UDP localhost rsyslog server on the puppetserver to capture
+  messages from the puppet services for processing and forwarding
+
 * Fri Nov 03 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.6-0
 - Ensure that FakeCA works properly with Puppet Enterprise
 - Ensure that the RPM installation permissions work properly with Puppet

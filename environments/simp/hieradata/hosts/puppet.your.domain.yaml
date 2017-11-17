@@ -43,7 +43,22 @@ simp_options::tcpwrappers: true
 # Allow the backup SIMP user, local only to this system
 simp::server::allow_simp_user: true
 
+# Ensure that the puppetserver's logs can be captured by the local system so
+# that they can be forwarded for analysis at a later date.
+#
+# Using a local UDP server allows for a much more reliable collection mechanism
+# than rsyslog file taps and allows for the encryption of log messages.
+#
+# For Puppet Open Source, the logs will be stored in /var/log/puppetserver.log
+# and are collected at the 'warn' level by default. Puppet Enterprise logging
+# settings are not manipulated by SIMP.
+rsyslog::udp_server: true
+rsyslog::udp_listen_address: '127.0.0.1'
+
+# Un-comment this line if using Puppet Open Source and you need the
+# puppetserver messages regarding node compile times, etc...
+# pupmod::master::log_level: INFO
+
 classes:
   - 'simp::server'
   - 'simp::puppetdb'
-
