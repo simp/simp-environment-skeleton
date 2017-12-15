@@ -34,7 +34,7 @@
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
 Version: 6.2.7
-Release: 0%{?dist}
+Release: 1%{?dist}
 License: Apache License 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -287,6 +287,10 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
+* Fri Dec 15 2017 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.2.7-1
+- Add the 'dist' to the package release to account for the SELinux version
+  restrictions
+
 * Fri Nov 17 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.7-0
 - Enable the UDP localhost rsyslog server on the puppetserver to capture
   messages from the puppet services for processing and forwarding
