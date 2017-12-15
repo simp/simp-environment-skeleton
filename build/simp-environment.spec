@@ -34,7 +34,7 @@
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
 Version: 6.2.7
-Release: 0
+Release: 0%{?dist}
 License: Apache License 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
