@@ -33,8 +33,8 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.7
-Release: 1%{?dist}
+Version: 6.2.8
+Release: 0%{?dist}
 License: Apache License 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -116,6 +116,7 @@ mkdir -p %{buildroot}/%{prefix}/hieradata/hostgroups
 mkdir -p %{buildroot}/%{prefix}/simp_autofiles
 mkdir -p %{buildroot}/%{prefix}/hieradata/compliance_profiles
 mkdir -p %{buildroot}/%{_var}/simp/environments/simp/site_files/krb5_files/files/keytabs
+mkdir -p %{buildroot}/%{_var}/simp/environments/simp/site_files/pki_files/files/keydist/cacerts
 
 # Now install the files.
 
@@ -140,6 +141,10 @@ cd -
 %attr(0750,-,-) %{_var}/simp/environments/simp/site_files/krb5_files
 %attr(0750,-,-) %{_var}/simp/environments/simp/site_files/krb5_files/files
 %attr(0750,-,-) %{_var}/simp/environments/simp/site_files/krb5_files/files/keytabs
+%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files
+%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files/files
+%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files/files/keydist
+%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files/files/keydist/cacerts
 %config(noreplace) %{prefix}/environment.conf
 %config(noreplace) %{prefix}/hieradata/hosts/puppet.your.domain.yaml
 %config(noreplace) %{prefix}/hieradata/hostgroups/default.yaml
@@ -287,7 +292,13 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
-* Fri Dec 15 2017 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.2.7-1
+* Thu Mar 08 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.8-0
+- Pre-populate the /var/simp/environments/simp/site_files/pki_files/
+  directory tree and set its ownership and permissions appropriately.
+  This is part of the fix to the failure of SIMP to bootstrap on
+  a system on which root's umask has already been restricted to 077.
+
+* Fri Dec 15 2017 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.2.8-0
 - Add the 'dist' to the package release to account for the SELinux version
   restrictions
 
