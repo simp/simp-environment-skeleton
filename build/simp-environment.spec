@@ -33,7 +33,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.8
+Version: 6.2.9
 Release: 0%{?dist}
 License: Apache License 2.0
 Group: Applications/System
@@ -292,6 +292,9 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
+* Wed Apr 25 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.9-0
+- Remove the simp_options::selinux variable from the scenario hieradata.
+
 * Thu Mar 08 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.8-0
 - Pre-populate the /var/simp/environments/simp/site_files/pki_files/
   directory tree and set its ownership and permissions appropriately.

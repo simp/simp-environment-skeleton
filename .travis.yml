@@ -1,17 +1,30 @@
 ---
 language: ruby
-sudo: false
 cache: bundler
-before_script:
-  - bundle update
-bundler_args: "--without system_tests"
-before_install: rm Gemfile.lock || true
-script:
-  - bundle exec rake pp_validate
-  - bundle exec rake yaml_validate
+sudo: false
+
+bundler_args: --without development system_tests --path .vendor
+
 notifications:
   email: false
-rvm:
-- 2.1.9
-matrix:
-  fast_finish: true
+
+addons:
+  apt:
+    packages:
+      - rpm
+
+before_install:
+  - rm -f Gemfile.lock
+
+jobs:
+  allow_failures:
+    - env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
+
+  include:
+    - stage: check
+      rvm: 2.4.1
+      script:
+        - bundle exec rake pp_validate
+        - bundle exec rake yaml_validate
+        - bundle exec rake pkg:compare_latest_tag
+        - bundle exec rake pkg:create_tag_changelog
