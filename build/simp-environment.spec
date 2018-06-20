@@ -159,6 +159,8 @@ cd -
 %{_var}/simp/environments/simp/FakeCA
 %config(noreplace) %{_var}/simp/environments/simp/FakeCA/togen
 %config(noreplace) %{_var}/simp/environments/simp/FakeCA/usergen
+%config(noreplace) %{_var}/simp/environments/simp/FakeCA/ca.cnf
+%config(noreplace) %{_var}/simp/environments/simp/FakeCA/user.cnf
 %attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/clean.sh
 %attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/gencerts_common.sh
 %attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/gencerts_nopass.sh
@@ -202,7 +204,7 @@ fi
 # Ensure that the cacertkey has some random gibberish in it if it doesn't
 # exist.
 if [ ! -e "%{_var}/simp/environments/simp/FakeCA/cacertkey" ]; then
-  dd if=/dev/urandom count=24 bs=1 status=none | openssl enc -a -out "%{prefix}/FakeCA/cacertkey"
+  dd if=/dev/urandom count=24 bs=1 status=none | openssl enc -a -out "%{_var}/simp/environments/simp/FakeCA/cacertkey"
 fi
 
 chmod 2770 %{prefix}
