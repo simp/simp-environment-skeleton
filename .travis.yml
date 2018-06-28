@@ -28,3 +28,19 @@ jobs:
         - bundle exec rake yaml_validate
         - bundle exec rake pkg:compare_latest_tag
         - bundle exec rake pkg:create_tag_changelog
+
+    - stage: deploy
+      rvm: 2.4.1
+      script:
+        - true
+      before_deploy:
+        - "export SPECFILE_VERSION=`rpm -q --specfile build/*.spec --queryformat '%{VERSION}'`"
+        - '[[ $TRAVIS_TAG =~ ^${SPECFILE_VERSION}$ ]]'
+      deploy:
+        - provider: releases
+          api_key:
+              secure: "INSERTVALIDKEYHEREPLEASE"
+          skip_cleanup: true
+          on:
+            tags: true
+            condition: '($SKIP_FORGE_PUBLISH != true)'
