@@ -33,7 +33,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.9
+Version: 6.2.10
 Release: 0%{?dist}
 License: Apache License 2.0
 Group: Applications/System
@@ -44,7 +44,7 @@ Requires: policycoreutils
 Requires: pupmod-simp-simp >= 3.0.0
 Requires: pupmod-simp-pki >= 6.0.0-0
 Requires: createrepo
-Requires: simp-rsync >= 6.0.0-0
+Requires: simp-rsync >= 6.2.0-0
 Requires: simp-utils >= 6.0.0-0
 Requires: rubygem(simp-cli) >= 1.0.0-0
 Requires: openssl
@@ -197,8 +197,8 @@ chgrp -R ${puppet_group} %{_var}/simp/environments/simp/site_files
 /usr/sbin/semodule -n -i %{_datadir}/selinux/packages/%{selinux_policy}
 if /usr/sbin/selinuxenabled; then
   /usr/sbin/load_policy
-  /sbin/fixfiles -R %{name} restore || :
-  /sbin/fixfiles restore %{_var}/simp || :
+  /sbin/fixfiles -F -R %{name} restore || :
+  /sbin/fixfiles -F restore %{_var}/simp || :
 fi
 
 # Ensure that the cacertkey has some random gibberish in it if it doesn't
@@ -208,18 +208,6 @@ if [ ! -e "%{_var}/simp/environments/simp/FakeCA/cacertkey" ]; then
 fi
 
 chmod 2770 %{prefix}
-
-codedir=`puppet config print codedir 2> /dev/null`
-if [ ! -d $codedir ]; then
-  codedir=`puppet config print confdir 2> /dev/null`
-fi
-
-if [ ! -a "${codedir}/environments/production" ]; then
-  (
-    cd "${codedir}/environments"
-    ln -s simp production
-  )
-fi
 
 # Switch things over to the new setup.
 arch=`uname -p`;
@@ -294,6 +282,16 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
+* Mon Jul 16 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.10-0
+- Added force option to the selinux fixfiles command in the post install
+  section.  If this is not set only the type context is restored and the
+  user context is also set in the selinux policy.
+- Removed logic to link production environment to simp environment.  This
+  is done in simp config if it is needed.
+- Updated rsync version required to 6.2.  Selinux code was moved from
+  rsync to environemnt at that time and using older versions can cause
+  unexpected results in the selinux policy.
+
 * Wed Apr 25 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.9-0
 - Remove the simp_options::selinux variable from the scenario hieradata.
 
@@ -318,7 +316,7 @@ fi
 
 * Thu Oct 26 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.5-0
 - selinux policy in module simp-environment was changing settings on rsync files not in the
-  simp environment and removing their selinux context.  This caused DNS, DHCP to fail 
+  simp environment and removing their selinux context.  This caused DNS, DHCP to fail
   if they were running in an enviroment by a name other then simp.
 - moved selinux policy to simp-environment module and had simp rsync require this module
   so the selinux policy for /var/simp directory would be in one spot.
