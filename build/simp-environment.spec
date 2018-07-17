@@ -284,12 +284,12 @@ fi
 %changelog
 * Mon Jul 16 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.10-0
 - Added force option to the selinux fixfiles command in the post install
-  section.  If this is not set only the type context is restored and the
-  user context is also set in the selinux policy.
+  section.  If this is not set, only the type context is restored, even though
+  the user context is also set in the selinux policy.
 - Removed logic to link production environment to simp environment.  This
   is done in simp config if it is needed.
 - Updated rsync version required to 6.2.  Selinux code was moved from
-  rsync to environemnt at that time and using older versions can cause
+  rsync to environment at that time and using older versions can cause
   unexpected results in the selinux policy.
 
 * Wed Apr 25 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.9-0
