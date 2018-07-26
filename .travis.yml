@@ -17,15 +17,13 @@ before_install:
   - rm -f Gemfile.lock
 
 jobs:
-  allow_failures:
-    - env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
-
   include:
     - stage: check
       rvm: 2.4.1
       script:
-        - bundle exec rake pp_validate
+        - bundle exec rake syntax
         - bundle exec rake yaml_validate
+        - bundle exec rake lint
         - bundle exec rake pkg:compare_latest_tag
         - bundle exec rake pkg:create_tag_changelog
 

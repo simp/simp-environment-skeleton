@@ -33,7 +33,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.2.10
+Version: 6.3.0
 Release: 0%{?dist}
 License: Apache License 2.0
 Group: Applications/System
@@ -41,9 +41,6 @@ Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: libselinux-utils
 Requires: policycoreutils
-Requires: pupmod-simp-simp >= 3.0.0
-Requires: pupmod-simp-pki >= 6.0.0-0
-Requires: createrepo
 Requires: simp-rsync >= 6.2.0-0
 Requires: simp-utils >= 6.0.0-0
 Requires: rubygem(simp-cli) >= 1.0.0-0
@@ -146,6 +143,7 @@ cd -
 %attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files/files/keydist
 %attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files/files/keydist/cacerts
 %config(noreplace) %{prefix}/environment.conf
+%config(noreplace) %{prefix}/hiera.yaml
 %config(noreplace) %{prefix}/hieradata/hosts/puppet.your.domain.yaml
 %config(noreplace) %{prefix}/hieradata/hostgroups/default.yaml
 %config(noreplace) %{prefix}/hieradata/scenarios/simp.yaml
@@ -282,6 +280,10 @@ fi
 /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
+* Thu Jul 26 2018 Nick Miller <nick.miller@onyxpoint.com> - 6.3.0-0
+- Added a default Hiera 5 hiera.yaml
+- Removed dependencies on puppet module RPMs to make installation more portable
+
 * Mon Jul 16 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.10-0
 - Added force option to the selinux fixfiles command in the post install
   section.  If this is not set, only the type context is restored, even
@@ -840,4 +842,3 @@ fi
   to vmware systems by default, so this will not affect any other types of host
   but is one less thing to remember to include.
 - Changed the verify variable for syslog to 2.
-
