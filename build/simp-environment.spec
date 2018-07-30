@@ -40,16 +40,17 @@ Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: libselinux-utils
+Requires: openssl
 Requires: policycoreutils
+Requires: rubygem(simp-cli) >= 1.0.0-0
 Requires: simp-rsync >= 6.2.0-0
 Requires: simp-utils >= 6.0.0-0
-Requires: rubygem(simp-cli) >= 1.0.0-0
-Requires: openssl
 Requires(pre,preun,post,postun): simp-adapter
 Requires(post): coreutils
+Requires(post): createrepo
 Requires(post): glibc-common
-Requires(post): pam
 Requires(post): libsemanage
+Requires(post): pam
 %if 0%{?selinux_policy_version:1}
 Requires(post): selinux-policy >= %{selinux_policy_version}
 Requires(post): selinux-policy-targeted >= %{selinux_policy_version}
