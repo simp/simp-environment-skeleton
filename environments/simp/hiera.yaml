@@ -18,7 +18,7 @@ hierarchy:
 
   - name: Per-OS data
     paths:
-    - "%{facts.os.family}"
+    - "%{facts.os.family}.yaml"
     - "%{facts.os.name}/%{facts.os.release.full}.yaml"
     - "%{facts.os.name}/%{facts.os.release.major}.yaml"
     - "%{facts.os.name}.yaml"

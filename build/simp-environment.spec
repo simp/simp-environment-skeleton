@@ -42,7 +42,6 @@ Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: libselinux-utils
 Requires: openssl
 Requires: policycoreutils
-Requires: rubygem(simp-cli) >= 1.0.0-0
 Requires: simp-rsync >= 6.2.0-0
 Requires: simp-utils >= 6.0.0-0
 Requires(pre,preun,post,postun): simp-adapter
