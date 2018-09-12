@@ -253,8 +253,10 @@ else
   fi
 fi
 
-# Needed for migrating the environment data into the codedir
-/usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='post' --rpm_status=$1 --preserve --target_dir='.'
+# Needed for migrating the environment data into the codedir for an initial install
+if [ $1 -eq 1 ]; then
+  /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='post' --rpm_status=$1 --preserve --target_dir='.'
+fi
 
 %postun
 # Post uninstall stuff
@@ -264,10 +266,11 @@ if [ $1 -eq 0 ]; then
     /usr/sbin/load_policy
     /sbin/fixfiles -R %{name} restore || :
   fi
+
+  # Needed for cleaning up the data from codedir as appropriate for an erase
+  /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 fi
 
-# Needed for cleaning up the data from codedir as appropriate
-/usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
 
 %changelog
 * Thu Jul 26 2018 Nick Miller <nick.miller@onyxpoint.com> - 6.3.0-0
@@ -277,6 +280,11 @@ fi
 - Removed the OBE environments/simp/hieradata/compliance_profiles directory
   and references to it.
 - Removed unnecessary package dependencies to make installation more portable.
+- Only use simp_rpm_helper to copy files installed in /usr/share/simp/environments
+  into /etc/puppetlabs/code/environments/simp, as appropriate, if this is an
+  initial install.
+- Only use simp_rpm_helper to remove file copies that reside in
+  /etc/puppetlabs/code/environments/simp, as appropriate, if this is an erase.
 
 * Mon Jul 16 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.10-0
 - Added force option to the selinux fixfiles command in the post install
