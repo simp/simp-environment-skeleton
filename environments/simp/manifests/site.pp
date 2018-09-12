@@ -21,10 +21,10 @@ Exec {
 $simp_scenario = 'simp'
 
 # Map SIMP parameters to NIST Special Publication 800-53, Revision 4
-# See hieradata/compliance_profiles/ for more options.
+# See modules/compliance_markup/data/compliance_profiles for more options.
 $compliance_profile = 'nist_800_53_rev4'
 
-# Place Hiera customizations based on this variable in hieradata/hostgroups/${::hostgroup}.yaml
+# Place Hiera customizations based on this variable in data/hostgroups/${::hostgroup}.yaml
 #
 # Example hostgroup declaration using a regex match on the hostname:
 #   case $facts['fqdn'] {

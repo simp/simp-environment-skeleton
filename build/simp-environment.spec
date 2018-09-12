@@ -42,11 +42,11 @@ Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: libselinux-utils
 Requires: openssl
 Requires: policycoreutils
-Requires: simp-rsync >= 6.2.0-0
-Requires: simp-utils >= 6.0.0-0
 Requires(pre,preun,post,postun): simp-adapter
+Requires(pre,post): puppet
 Requires(post): coreutils
 Requires(post): createrepo
+Requires(post): facter
 Requires(post): glibc-common
 Requires(post): libsemanage
 Requires(post): pam
@@ -58,7 +58,7 @@ Requires(post): selinux-policy
 Requires(post): selinux-policy-targeted
 %endif
 
-Requires(postun): policycoreutils
+Requires(post,postun): policycoreutils
 BuildRequires: selinux-policy-targeted
 %if 0%{?selinux_policy_version:1}
 BuildRequires: policycoreutils == %{policycoreutils_version}
@@ -79,15 +79,6 @@ BuildRequires: selinux-policy-targeted
   %endif
 %endif
 
-#%if "%{?rhel}%{!?rhel:0}" > "6"
-#BuildRequires: selinux-policy-devel
-#%endif
-Provides: simp-bootstrap = %{version}-%{release}
-Provides: simp_bootstrap = %{version}-%{release}
-Obsoletes: simp-bootstrap < %{version}-%{release}
-Obsoletes: simp_bootstrap < %{version}-%{release}
-Obsoletes: simp_config < %{version}-%{release}
-Obsoletes: simp-config < %{version}-%{release}
 Buildarch: noarch
 
 Prefix: /usr/share/simp/environments/simp
@@ -109,9 +100,8 @@ cd -
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 
 # Make your directories here.
-mkdir -p %{buildroot}/%{prefix}/hieradata/hostgroups
+mkdir -p %{buildroot}/%{prefix}/data/hostgroups
 mkdir -p %{buildroot}/%{prefix}/simp_autofiles
-mkdir -p %{buildroot}/%{prefix}/hieradata/compliance_profiles
 mkdir -p %{buildroot}/%{_var}/simp/environments/simp/site_files/krb5_files/files/keytabs
 mkdir -p %{buildroot}/%{_var}/simp/environments/simp/site_files/pki_files/files/keydist/cacerts
 
@@ -144,12 +134,12 @@ cd -
 %attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files/files/keydist/cacerts
 %config(noreplace) %{prefix}/environment.conf
 %config(noreplace) %{prefix}/hiera.yaml
-%config(noreplace) %{prefix}/hieradata/hosts/puppet.your.domain.yaml
-%config(noreplace) %{prefix}/hieradata/hostgroups/default.yaml
-%config(noreplace) %{prefix}/hieradata/scenarios/simp.yaml
-%config(noreplace) %{prefix}/hieradata/scenarios/simp_lite.yaml
-%config(noreplace) %{prefix}/hieradata/scenarios/poss.yaml
-%config(noreplace) %{prefix}/hieradata/default.yaml
+%config(noreplace) %{prefix}/data/hosts/puppet.your.domain.yaml
+%config(noreplace) %{prefix}/data/hostgroups/default.yaml
+%config(noreplace) %{prefix}/data/scenarios/simp.yaml
+%config(noreplace) %{prefix}/data/scenarios/simp_lite.yaml
+%config(noreplace) %{prefix}/data/scenarios/poss.yaml
+%config(noreplace) %{prefix}/data/default.yaml
 %config(noreplace) %{prefix}/manifests/site.pp
 
 %{_datadir}/selinux/*/%{selinux_policy}
@@ -186,7 +176,7 @@ puppet_group=`puppet config print group 2> /dev/null`
 
 chown -R ${puppet_user}:${puppet_group} %{prefix}/simp_autofiles
 chgrp ${puppet_group} %{prefix}/environment.conf
-chgrp -R ${puppet_group} %{prefix}/hieradata
+chgrp -R ${puppet_group} %{prefix}/data
 chgrp -R ${puppet_group} %{prefix}/manifests
 chgrp -R ${puppet_group} %{_var}/simp/environments/simp/site_files
 
@@ -281,8 +271,12 @@ fi
 
 %changelog
 * Thu Jul 26 2018 Nick Miller <nick.miller@onyxpoint.com> - 6.3.0-0
-- Added a default Hiera 5 hiera.yaml
-- Removed dependencies on puppet module RPMs to make installation more portable
+- Added a default Hiera 5 hiera.yaml.
+- Renamed environments/simp/hieradata/ to environments/simp/data/ to support
+  staged rollout of environment-specific hiera.yaml use.
+- Removed the OBE environments/simp/hieradata/compliance_profiles directory
+  and references to it.
+- Removed unnecessary package dependencies to make installation more portable.
 
 * Mon Jul 16 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.10-0
 - Added force option to the selinux fixfiles command in the post install
