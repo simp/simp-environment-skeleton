@@ -255,7 +255,9 @@ fi
 
 # Needed for migrating the environment data into the codedir for an initial install
 if [ $1 -eq 1 ]; then
-  /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='post' --rpm_status=$1 --preserve --target_dir='.'
+  if [ -x /usr/local/sbin/simp_rpm_helper ] ; then
+    /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='post' --rpm_status=$1 --preserve --target_dir='.'
+  fi
 fi
 
 %postun
@@ -268,7 +270,9 @@ if [ $1 -eq 0 ]; then
   fi
 
   # Needed for cleaning up the data from codedir as appropriate for an erase
-  /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
+  if [ -x /usr/local/sbin/simp_rpm_helper ] ; then
+    /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
+  fi
 fi
 
 
