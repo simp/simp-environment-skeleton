@@ -15,7 +15,7 @@ Exec {
 # Set this variable to make use of the different class sets in heiradata/scenarios,
 #   mostly applicable to puppet agents, or, the SIMP server overrides some of these.
 #   * `simp` - compliant and secure
-#   * `simp-lite` - makes use of many of our modules, but doesn't apply
+#   * `simp_lite` - makes use of many of our modules, but doesn't apply
 #        many prohibitive security or compliance features, svckill
 #   * `poss` - only include pupmod by default to configure the agent
 $simp_scenario = 'simp'
