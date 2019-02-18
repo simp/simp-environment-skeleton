@@ -279,7 +279,7 @@ fi
 %changelog
 * Fri Feb 15 2019 Michael Riddle <michael.riddle@onyxpoint.com> - 6.3.1-0
 - If the gencerts scripts are called via sudo, puppet won't be in the path.
-  Added the fully qualified path to the puppet binary to
+  Added the fully qualified path to the puppet binary to remedy this issue.
 
 * Thu Jul 26 2018 Nick Miller <nick.miller@onyxpoint.com> - 6.3.0-0
 - Added a default Hiera 5 hiera.yaml.
