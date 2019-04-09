@@ -277,6 +277,13 @@ fi
 
 
 %changelog
+* Tue Apr 09 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.3.1-0
+- `simp_options::ldap` now defaults to `false` in the simp and simp_lite
+  scenarios, because use of LDAP is not required.  This change will
+  is important for sites that do not use LDAP at all or use a different
+  implementation of LDAP that does not match the schemas provided by
+  SIMP.
+
 * Fri Feb 15 2019 Michael Riddle <michael.riddle@onyxpoint.com> - 6.3.1-0
 - If the gencerts scripts are called via sudo, puppet won't be in the path.
   Added the fully qualified path to the puppet binary to remedy this issue.
