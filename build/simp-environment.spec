@@ -33,7 +33,7 @@
 
 Summary: The SIMP Environment Scaffold
 Name: simp-environment
-Version: 6.3.1
+Version: 6.4.0
 Release: 0%{?dist}
 License: Apache License 2.0
 Group: Applications/System
