@@ -176,7 +176,7 @@ chown -R ${puppet_user}:${puppet_group} %{prefix}/simp_autofiles
 chgrp ${puppet_group} %{prefix}/environment.conf
 chgrp -R ${puppet_group} %{prefix}/data
 chgrp -R ${puppet_group} %{prefix}/manifests
-chgrp -R ${puppet_group} %{_var}/simp/environments/simp/site_files
+chgrp -R ${puppet_group} %{prefix}/site_files
 
 # Build an load policy to set selinux context to enable puppet
 # to read from /var/simp directories.
@@ -184,13 +184,6 @@ chgrp -R ${puppet_group} %{_var}/simp/environments/simp/site_files
 if /usr/sbin/selinuxenabled; then
   /usr/sbin/load_policy
   /sbin/fixfiles -F -R %{name} restore || :
-  /sbin/fixfiles -F restore %{_var}/simp || :
-fi
-
-# Ensure that the cacertkey has some random gibberish in it if it doesn't
-# exist.
-if [ ! -e "%{_var}/simp/environments/simp/FakeCA/cacertkey" ]; then
-  dd if=/dev/urandom count=24 bs=1 status=none | openssl enc -a -out "%{_var}/simp/environments/simp/FakeCA/cacertkey"
 fi
 
 chmod 2770 %{prefix}
@@ -266,17 +259,21 @@ fi
 * Tue Apr 09 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.4.0-0
 - Reworked packaging so this RPM no longer modifies files used by a user's
   'simp' Puppet environment
-  - Removed calls to the RPM helper script in the %post and %postun sections.
-    This means the default environment is no longer copied into
-    /etc/puppetlabs/code/environments/simp upon initial install, and no longer
-    removed from that directory upon erase.
   - Changed installation directory from %{_var} file to %{prefix} for the
     subset of file previously installed there.  All files are
     now installed in /usr/share/simp as an example, only.
   - Removed OBE %config(noreplace) directives on files previously installed
     in /var/simp/environments/simp.
-  - Removed erroneous %config(noreplace) directives on files installed
-    in /usr/share/simp/environments/simp.
+  - The following actions have been removed from simp-environment and will be moved
+    to a simp cli command
+    - Removed erroneous %config(noreplace) directives on files installed
+      in /usr/share/simp/environments/simp.
+    - Remove selinux fixfiles on the /var/simp directory during installation.
+    - Remove cacertkey creation from post install.
+    - Removed calls to the RPM helper script in the %post and %postun sections.
+      This means the default environment is no longer copied into
+      /etc/puppetlabs/code/environments/simp upon initial install, and no longer
+      removed from that directory upon erase.
 
 * Tue Apr 09 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.4.0-0
 - `simp_options::ldap` now defaults to `false` in the simp and simp_lite
