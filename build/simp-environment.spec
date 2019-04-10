@@ -264,12 +264,19 @@ fi
 
 %changelog
 * Tue Apr 09 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.4.0-0
-- Removed calls to rpm helper script in the post sections.  Default
-  environment is no longer copied to /etc/puppetlabs/code/environments/simp
-- Changed installation directory from %{_var} file to %{prefix} and removed
-  config directive so new files would overwrite old files.  Secondary
-  environment is now installed in /usr/share/simp/ as example only and
-  will not update anything in the users environments.
+- Reworked packaging so this RPM no longer modifies files used by a user's
+  'simp' Puppet environment
+  - Removed calls to the RPM helper script in the %post and %postun sections.
+    This means the default environment is no longer copied into
+    /etc/puppetlabs/code/environments/simp upon initial install, and no longer
+    removed from that directory upon erase.
+  - Changed installation directory from %{_var} file to %{prefix} for the
+    subset of file previously installed there.  All files are
+    now installed in /usr/share/simp as an example, only.
+  - Removed OBE %config(noreplace) directives on files previously installed
+    in /var/simp/environments/simp.
+  - Removed erroneous %config(noreplace) directives on files installed
+    in /usr/share/simp/environments/simp.
 
 * Tue Apr 09 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.4.0-0
 - `simp_options::ldap` now defaults to `false` in the simp and simp_lite
