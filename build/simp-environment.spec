@@ -102,14 +102,13 @@ cd -
 # Make your directories here.
 mkdir -p %{buildroot}/%{prefix}/data/hostgroups
 mkdir -p %{buildroot}/%{prefix}/simp_autofiles
-mkdir -p %{buildroot}/%{_var}/simp/environments/simp/site_files/krb5_files/files/keytabs
-mkdir -p %{buildroot}/%{_var}/simp/environments/simp/site_files/pki_files/files/keydist/cacerts
+mkdir -p %{buildroot}/%{prefix}/site_files/krb5_files/files/keytabs
+mkdir -p %{buildroot}/%{prefix}/site_files/pki_files/files/keydist/cacerts
 
 # Now install the files.
 
-# Make sure we have a clean, and active, copy of the FakeCA
-cp -r FakeCA %{buildroot}/usr/share/simp
-cp -r FakeCA %{buildroot}/%{_var}/simp/environments/simp
+# Make sure we have a clean copy of the FakeCA
+cp -r FakeCA %{buildroot}/%{prefix}
 
 cp -r environments/* %{buildroot}/`dirname %{prefix}`
 
@@ -124,35 +123,34 @@ cd -
 %defattr(0640,root,root,0750)
 %{prefix}
 %attr(0750,-,-) %{prefix}/simp_autofiles
-%attr(0750,-,-) %{_var}/simp/environments/simp/site_files
-%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/krb5_files
-%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/krb5_files/files
-%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/krb5_files/files/keytabs
-%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files
-%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files/files
-%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files/files/keydist
-%attr(0750,-,-) %{_var}/simp/environments/simp/site_files/pki_files/files/keydist/cacerts
-%config(noreplace) %{prefix}/environment.conf
-%config(noreplace) %{prefix}/hiera.yaml
-%config(noreplace) %{prefix}/data/hosts/puppet.your.domain.yaml
-%config(noreplace) %{prefix}/data/hostgroups/default.yaml
-%config(noreplace) %{prefix}/data/scenarios/simp.yaml
-%config(noreplace) %{prefix}/data/scenarios/simp_lite.yaml
-%config(noreplace) %{prefix}/data/scenarios/poss.yaml
-%config(noreplace) %{prefix}/data/default.yaml
-%config(noreplace) %{prefix}/manifests/site.pp
+%attr(0750,-,-) %{prefix}/site_files
+%attr(0750,-,-) %{prefix}/site_files/krb5_files
+%attr(0750,-,-) %{prefix}/site_files/krb5_files/files
+%attr(0750,-,-) %{prefix}/site_files/krb5_files/files/keytabs
+%attr(0750,-,-) %{prefix}/site_files/pki_files
+%attr(0750,-,-) %{prefix}/site_files/pki_files/files
+%attr(0750,-,-) %{prefix}/site_files/pki_files/files/keydist
+%attr(0750,-,-) %{prefix}/site_files/pki_files/files/keydist/cacerts
+%{prefix}/environment.conf
+%{prefix}/hiera.yaml
+%{prefix}/data/hosts/puppet.your.domain.yaml
+%{prefix}/data/hostgroups/default.yaml
+%{prefix}/data/scenarios/simp.yaml
+%{prefix}/data/scenarios/simp_lite.yaml
+%{prefix}/data/scenarios/poss.yaml
+%{prefix}/data/default.yaml
+%{prefix}/manifests/site.pp
 
 %{_datadir}/selinux/*/%{selinux_policy}
-/usr/share/simp/FakeCA
-%{_var}/simp/environments/simp/FakeCA
-%config(noreplace) %{_var}/simp/environments/simp/FakeCA/togen
-%config(noreplace) %{_var}/simp/environments/simp/FakeCA/usergen
-%config(noreplace) %{_var}/simp/environments/simp/FakeCA/ca.cnf
-%config(noreplace) %{_var}/simp/environments/simp/FakeCA/user.cnf
-%attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/clean.sh
-%attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/gencerts_common.sh
-%attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/gencerts_nopass.sh
-%attr(0750,-,-) %{_var}/simp/environments/simp/FakeCA/usergen_nopass.sh
+%{prefix}/FakeCA
+%{prefix}/FakeCA/togen
+%{prefix}/FakeCA/usergen
+%{prefix}/FakeCA/ca.cnf
+%{prefix}/FakeCA/user.cnf
+%attr(0750,-,-) %{prefix}/FakeCA/clean.sh
+%attr(0750,-,-) %{prefix}/FakeCA/gencerts_common.sh
+%attr(0750,-,-) %{prefix}/FakeCA/gencerts_nopass.sh
+%attr(0750,-,-) %{prefix}/FakeCA/usergen_nopass.sh
 
 %pre
 PATH=/opt/puppetlabs/bin:$PATH
@@ -253,13 +251,6 @@ else
   fi
 fi
 
-# Needed for migrating the environment data into the codedir for an initial install
-if [ $1 -eq 1 ]; then
-  if [ -x /usr/local/sbin/simp_rpm_helper ] ; then
-    /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='post' --rpm_status=$1 --preserve --target_dir='.'
-  fi
-fi
-
 %postun
 # Post uninstall stuff
 if [ $1 -eq 0 ]; then
@@ -269,14 +260,14 @@ if [ $1 -eq 0 ]; then
     /sbin/fixfiles -R %{name} restore || :
   fi
 
-  # Needed for cleaning up the data from codedir as appropriate for an erase
-  if [ -x /usr/local/sbin/simp_rpm_helper ] ; then
-    /usr/local/sbin/simp_rpm_helper --rpm_dir=%{prefix} --rpm_section='postun' --rpm_status=$1 --preserve --target_dir='.'
-  fi
 fi
 
-
 %changelog
+* Tue Apr 09 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.3.1-0
+- remove calls to rpm helper script in the post sections.
+- changed installation directory of _var file to prefix and removed
+  config directive so new files would overwrite old files.
+
 * Tue Apr 09 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.3.1-0
 - `simp_options::ldap` now defaults to `false` in the simp and simp_lite
   scenarios, because use of LDAP is not required.  This change will
