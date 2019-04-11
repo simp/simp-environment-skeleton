@@ -264,13 +264,12 @@ fi
     now installed in /usr/share/simp as an example, only.
   - Removed OBE %config(noreplace) directives on files previously installed
     in /var/simp/environments/simp.
-  - The following actions have been removed from simp-environment and will be moved
-    to a simp cli command
-    - Removed erroneous %config(noreplace) directives on files installed
-      in /usr/share/simp/environments/simp.
-    - Remove selinux fixfiles on the /var/simp directory during installation.
-    - Remove cacertkey creation from post install.
-    - Removed calls to the RPM helper script in the %post and %postun sections.
+  - Removed erroneous %config(noreplace) directives on files installed
+    in /usr/share/simp/environments/simp.
+  - Removed actions that will be implemented by a simp cli command
+    - selinux fixfiles on the /var/simp directory during installation.
+    - cacertkey creation from post install.
+    - Calls to the RPM helper script in the %post and %postun sections.
       This means the default environment is no longer copied into
       /etc/puppetlabs/code/environments/simp upon initial install, and no longer
       removed from that directory upon erase.
