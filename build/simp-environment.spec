@@ -81,7 +81,7 @@ BuildRequires: selinux-policy-targeted
 
 Buildarch: noarch
 
-Prefix: /usr/share/simp/environments/simp
+Prefix: /usr/share/simp/environments
 
 %description
 
@@ -100,17 +100,17 @@ cd -
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 
 # Make your directories here.
-mkdir -p %{buildroot}/%{prefix}/data/hostgroups
-mkdir -p %{buildroot}/%{prefix}/simp_autofiles
-mkdir -p %{buildroot}/%{prefix}/site_files/krb5_files/files/keytabs
-mkdir -p %{buildroot}/%{prefix}/site_files/pki_files/files/keydist/cacerts
+mkdir -p %{buildroot}/%{prefix}/simp/data/hostgroups
+mkdir -p %{buildroot}/%{prefix}/secondary/simp_autofiles
+mkdir -p %{buildroot}/%{prefix}/secondary/site_files/krb5_files/files/keytabs
+mkdir -p %{buildroot}/%{prefix}/secondary/site_files/pki_files/files/keydist/cacerts
 
 # Now install the files.
 
 # Make sure we have a clean copy of the FakeCA
-cp -r FakeCA %{buildroot}/%{prefix}
+cp -r FakeCA %{buildroot}/%{prefix}/secondary
 
-cp -r environments/* %{buildroot}/`dirname %{prefix}`
+cp -r environments/* %{buildroot}/`dirname %{prefix}/simp`
 
 cd build/selinux
   install -p -m 644 -D %{selinux_policy} %{buildroot}/%{_datadir}/selinux/packages/%{selinux_policy}
@@ -122,35 +122,35 @@ cd -
 %files
 %defattr(0640,root,root,0750)
 %{prefix}
-%attr(0750,-,-) %{prefix}/simp_autofiles
-%attr(0750,-,-) %{prefix}/site_files
-%attr(0750,-,-) %{prefix}/site_files/krb5_files
-%attr(0750,-,-) %{prefix}/site_files/krb5_files/files
-%attr(0750,-,-) %{prefix}/site_files/krb5_files/files/keytabs
-%attr(0750,-,-) %{prefix}/site_files/pki_files
-%attr(0750,-,-) %{prefix}/site_files/pki_files/files
-%attr(0750,-,-) %{prefix}/site_files/pki_files/files/keydist
-%attr(0750,-,-) %{prefix}/site_files/pki_files/files/keydist/cacerts
-%{prefix}/environment.conf
-%{prefix}/hiera.yaml
-%{prefix}/data/hosts/puppet.your.domain.yaml
-%{prefix}/data/hostgroups/default.yaml
-%{prefix}/data/scenarios/simp.yaml
-%{prefix}/data/scenarios/simp_lite.yaml
-%{prefix}/data/scenarios/poss.yaml
-%{prefix}/data/default.yaml
-%{prefix}/manifests/site.pp
+%attr(0750,-,-) %{prefix}/secondary/simp_autofiles
+%attr(0750,-,-) %{prefix}/secondary/site_files
+%attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files
+%attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files/files
+%attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files/files/keytabs
+%attr(0750,-,-) %{prefix}/secondary/site_files/pki_files
+%attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files
+%attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist
+%attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist/cacerts
+%{prefix}/simp/environment.conf
+%{prefix}/simp/hiera.yaml
+%{prefix}/simp/data/hosts/puppet.your.domain.yaml
+%{prefix}/simp/data/hostgroups/default.yaml
+%{prefix}/simp/data/scenarios/simp.yaml
+%{prefix}/simp/data/scenarios/simp_lite.yaml
+%{prefix}/simp/data/scenarios/poss.yaml
+%{prefix}/simp/data/default.yaml
+%{prefix}/simp/manifests/site.pp
 
 %{_datadir}/selinux/*/%{selinux_policy}
-%{prefix}/FakeCA
-%{prefix}/FakeCA/togen
-%{prefix}/FakeCA/usergen
-%{prefix}/FakeCA/ca.cnf
-%{prefix}/FakeCA/user.cnf
-%attr(0750,-,-) %{prefix}/FakeCA/clean.sh
-%attr(0750,-,-) %{prefix}/FakeCA/gencerts_common.sh
-%attr(0750,-,-) %{prefix}/FakeCA/gencerts_nopass.sh
-%attr(0750,-,-) %{prefix}/FakeCA/usergen_nopass.sh
+%{prefix}/secondary/FakeCA
+%{prefix}/secondary/FakeCA/togen
+%{prefix}/secondary/FakeCA/usergen
+%{prefix}/secondary/FakeCA/ca.cnf
+%{prefix}/secondary/FakeCA/user.cnf
+%attr(0750,-,-) %{prefix}/secondary/FakeCA/clean.sh
+%attr(0750,-,-) %{prefix}/secondary/FakeCA/gencerts_common.sh
+%attr(0750,-,-) %{prefix}/secondary/FakeCA/gencerts_nopass.sh
+%attr(0750,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %pre
 PATH=/opt/puppetlabs/bin:$PATH
@@ -172,11 +172,11 @@ export PATH
 puppet_user=`puppet config print user 2> /dev/null`
 puppet_group=`puppet config print group 2> /dev/null`
 
-chown -R ${puppet_user}:${puppet_group} %{prefix}/simp_autofiles
-chgrp ${puppet_group} %{prefix}/environment.conf
-chgrp -R ${puppet_group} %{prefix}/data
-chgrp -R ${puppet_group} %{prefix}/manifests
-chgrp -R ${puppet_group} %{prefix}/site_files
+chown -R ${puppet_user}:${puppet_group} %{prefix}/secondary/simp_autofiles
+chgrp ${puppet_group} %{prefix}/simp/environment.conf
+chgrp -R ${puppet_group} %{prefix}/simp/data
+chgrp -R ${puppet_group} %{prefix}/simp/manifests
+chgrp -R ${puppet_group} %{prefix}/secondary/site_files
 
 # Build an load policy to set selinux context to enable puppet
 # to read from /var/simp directories.
@@ -187,6 +187,19 @@ if /usr/sbin/selinuxenabled; then
 fi
 
 chmod 2770 %{prefix}
+
+# Check if the directory for secondary environments exists and create it if it does not
+sec_dir="/var/simp"
+if [ ! -d $sec_dir ]; then
+  mkdir $sec_dir
+  chown root:root $sec_dir
+  chmod 755 $sec_dir
+fi
+if [ ! -d $sec_dir/environments ]; then
+  mkdir $sec_dir/environments
+  chown root:root $sec_dir
+  chmod 755 $sec_dir
+fi
 
 # Switch things over to the new setup.
 arch=`uname -p`;
@@ -256,6 +269,9 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog
+* Wed Apr 24 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.4.0-0
+- Split the Puppet Environment files and the Secondary Environment files
+  into seperate directories.
 * Tue Apr 09 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.4.0-0
 - Reworked packaging so this RPM no longer modifies files used by a user's
   'simp' Puppet environment
