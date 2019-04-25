@@ -131,6 +131,8 @@ cd -
 %attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files
 %attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist
 %attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist/cacerts
+%{prefix}/simp
+%attr(0755,-,-) %{prefix}/simp
 %{prefix}/simp/environment.conf
 %{prefix}/simp/hiera.yaml
 %{prefix}/simp/data/hosts/puppet.your.domain.yaml
@@ -201,61 +203,7 @@ if [ ! -d $sec_dir/environments ]; then
   chmod 755 $sec_dir
 fi
 
-# Switch things over to the new setup.
-arch=`uname -p`;
-version=`facter lsbdistrelease 2> /dev/null`;
-majversion=`facter lsbmajdistrelease 2> /dev/null`;
-os=`facter operatingsystem 2> /dev/null`;
-www_dir="/var/www/yum";
-base="${www_dir}/${os}";
-
-if [ -d $base ] && [ ! -h $base/$majversion ]; then
-  if [ -f $base/$majversion/$arch/.treeinfo ]; then
-    version=`grep version $base/$majversion/$arch/.treeinfo | cut -f3 -d' '`;
-  fi
-
-  cd $base;
-  mv $majversion $version;
-
-  ln -s $version $majversion;
-fi
-
-# Check to see if the 'SIMP' repo is on the system and correct.
-if [ -d "${www_dir}/SIMP" ]; then
-  cd "${www_dir}/SIMP";
-  if [ -d "${www_dir}/SIMP/repodata" ]; then
-    rm -rf repodata;
-  fi
-
-  if [ -d i386 ]; then
-    (
-      cd i386;
-      for file in ../noarch/*; do ln -sf $file .; done
-      createrepo --update -p .;
-      chown -R root:apache *;
-      chmod -R g+rX *;
-    )
-  fi
-  if [ -d x86_64 ]; then
-    (
-      cd x86_64;
-      for file in ../noarch/*; do ln -sf $file .; done
-      createrepo --update -p .;
-      chown -R root:apache *;
-      chmod -R g+rX *;
-    )
-  fi
-else
-  # Only warn user if the kernel procinfo includes a `simp_install` argument, which
-  # indicates this is an ISO install.  Otherwise, we cannot assume that the simp server
-  # is also the yum server for simp packages.
-  simp_install=`awk -F "simp_install=" '{print $2}' /proc/cmdline | cut -f1 -d' '`
-  if [[ ! -z "${simp_install}" &&  ! -d "${www_dir}/SIMP" ]]; then
-    echo "Warning: Could not find ${www_dir}/SIMP on this system, you will need";
-    echo "  to ensure that your 'SIMP' repository has repodata in i386 and";
-    echo "  x86_64 as well as having symlinked noarch to both."
-  fi
-fi
+# Yum repo setup is now in simp-utils
 
 %postun
 # Post uninstall stuff
