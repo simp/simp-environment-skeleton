@@ -147,6 +147,10 @@ cd -
 %{prefix}/secondary/FakeCA/usergen
 %{prefix}/secondary/FakeCA/ca.cnf
 %{prefix}/secondary/FakeCA/user.cnf
+%{prefix}/secondary/FakeCA/clean.sh
+%{prefix}/secondary/FakeCA/gencerts_common.sh
+%{prefix}/secondary/FakeCA/gencerts_nopass.sh
+%{prefix}/secondary/FakeCA/usergen_nopass.sh
 %attr(0750,-,-) %{prefix}/secondary/FakeCA/clean.sh
 %attr(0750,-,-) %{prefix}/secondary/FakeCA/gencerts_common.sh
 %attr(0750,-,-) %{prefix}/secondary/FakeCA/gencerts_nopass.sh
