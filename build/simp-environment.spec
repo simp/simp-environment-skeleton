@@ -101,16 +101,14 @@ cd -
 
 # Make your directories here.
 mkdir -p %{buildroot}/%{prefix}/simp/data/hostgroups
-mkdir -p %{buildroot}/%{prefix}/secondary/simp_autofiles
+mkdir -p %{buildroot}/%{prefix}/writable/simp_autofiles
 mkdir -p %{buildroot}/%{prefix}/secondary/site_files/krb5_files/files/keytabs
 mkdir -p %{buildroot}/%{prefix}/secondary/site_files/pki_files/files/keydist/cacerts
 
 # Now install the files.
 
 # Make sure we have a clean copy of the FakeCA
-cp -r FakeCA %{buildroot}/%{prefix}/secondary
-
-cp -r environments/* %{buildroot}/`dirname %{prefix}/simp`
+cp -r environments/* %{buildroot}/%{prefix}
 
 cd build/selinux
   install -p -m 644 -D %{selinux_policy} %{buildroot}/%{_datadir}/selinux/packages/%{selinux_policy}
@@ -122,7 +120,7 @@ cd -
 %files
 %defattr(0640,root,root,0750)
 %{prefix}
-%attr(0750,-,-) %{prefix}/secondary/simp_autofiles
+%attr(0750,-,-) %{prefix}/writable/simp_autofiles
 %attr(0750,-,-) %{prefix}/secondary/site_files
 %attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files
 %attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files/files
@@ -174,7 +172,7 @@ export PATH
 puppet_user=`puppet config print user 2> /dev/null`
 puppet_group=`puppet config print group 2> /dev/null`
 
-chown -R ${puppet_user}:${puppet_group} %{prefix}/secondary/simp_autofiles
+chown -R ${puppet_user}:${puppet_group} %{prefix}/writable/simp_autofiles
 chgrp ${puppet_group} %{prefix}/simp/environment.conf
 chgrp -R ${puppet_group} %{prefix}/simp/data
 chgrp -R ${puppet_group} %{prefix}/simp/manifests
@@ -188,7 +186,7 @@ if /usr/sbin/selinuxenabled; then
   /sbin/fixfiles -F -R %{name} restore || :
 fi
 
-chmod 2770 %{prefix}
+chmod 0770 %{prefix}
 
 # Check if the directory for secondary environments exists and create it if it does not
 sec_dir="/var/simp"
@@ -218,8 +216,8 @@ fi
 
 %changelog
 * Wed Apr 24 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.4.0-0
-- Split the Puppet Environment files and the Secondary Environment files
-  into seperate directories.
+- Split the Environment files into the three seperate environment directories.
+- remove yum logic (it is moved to simp-utils)
 * Tue Apr 09 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.4.0-0
 - Reworked packaging so this RPM no longer modifies files used by a user's
   'simp' Puppet environment
