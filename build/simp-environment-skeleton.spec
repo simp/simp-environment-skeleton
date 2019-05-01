@@ -31,25 +31,29 @@
 %define selinux_policy_short simp-environment
 %define selinux_policy %{selinux_policy_short}.pp
 
-Summary: The SIMP Environment Scaffold
-Name: simp-environment
+Summary: The SIMP Environment Skeleton
+Name: simp-environment-skeleton
 Version: 6.4.0
 Release: 0%{?dist}
 License: Apache License 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Obsoletes: simp-environment < 6.4.0
+
+Buildarch: noarch
+
+Prefix: /usr/share/simp/environment-skeleton
+
+%package -n simp-environment-selinux-policy
+Summary: SELinux Policy for deployed SIMP environment resources
+Version: 1.0.0
+Release: 0%{?dist}
+License: Apache License 2.0
 Requires: libselinux-utils
-Requires: openssl
 Requires: policycoreutils
-Requires(pre,preun,post,postun): simp-adapter
-Requires(pre,post): puppet
-Requires(post): coreutils
-Requires(post): createrepo
-Requires(post): facter
 Requires(post): glibc-common
 Requires(post): libsemanage
-Requires(post): pam
 %if 0%{?selinux_policy_version:1}
 Requires(post): selinux-policy >= %{selinux_policy_version}
 Requires(post): selinux-policy-targeted >= %{selinux_policy_version}
@@ -57,7 +61,6 @@ Requires(post): selinux-policy-targeted >= %{selinux_policy_version}
 Requires(post): selinux-policy
 Requires(post): selinux-policy-targeted
 %endif
-
 Requires(post,postun): policycoreutils
 BuildRequires: selinux-policy-targeted
 %if 0%{?selinux_policy_version:1}
@@ -79,14 +82,15 @@ BuildRequires: selinux-policy-targeted
   %endif
 %endif
 
-Buildarch: noarch
-
-Prefix: /usr/share/simp/environments
-
 %description
 
 Contains template files and directories for initially setting up a SIMP server
 using a default 'simp' Puppet Environment.
+
+%description -n simp-environment-selinux-policy
+
+Provides SELinux policies suitable for configuring permissions on SIMP provided
+environment data.
 
 %prep
 %setup -q
@@ -107,9 +111,9 @@ mkdir -p %{buildroot}/%{prefix}/secondary/site_files/pki_files/files/keydist/cac
 
 # Now install the files.
 
-# Make sure we have a clean copy of the FakeCA
 cp -r environments/* %{buildroot}/%{prefix}
 
+# Handle the SELinux materials
 cd build/selinux
   install -p -m 644 -D %{selinux_policy} %{buildroot}/%{_datadir}/selinux/packages/%{selinux_policy}
 cd -
@@ -121,6 +125,7 @@ cd -
 %defattr(0640,root,root,0750)
 %{prefix}
 %attr(0750,-,-) %{prefix}/writable/simp_autofiles
+
 %attr(0750,-,-) %{prefix}/secondary/site_files
 %attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files
 %attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files/files
@@ -129,8 +134,9 @@ cd -
 %attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files
 %attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist
 %attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist/cacerts
+
 %{prefix}/simp
-%attr(0755,-,-) %{prefix}/simp
+%attr(0750,-,-) %{prefix}/simp
 %{prefix}/simp/environment.conf
 %{prefix}/simp/hiera.yaml
 %{prefix}/simp/data/hosts/puppet.your.domain.yaml
@@ -141,7 +147,6 @@ cd -
 %{prefix}/simp/data/default.yaml
 %{prefix}/simp/manifests/site.pp
 
-%{_datadir}/selinux/*/%{selinux_policy}
 %{prefix}/secondary/FakeCA
 %{prefix}/secondary/FakeCA/togen
 %{prefix}/secondary/FakeCA/usergen
@@ -156,32 +161,11 @@ cd -
 %attr(0750,-,-) %{prefix}/secondary/FakeCA/gencerts_nopass.sh
 %attr(0750,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
-%pre
-PATH=/opt/puppetlabs/bin:$PATH
-export PATH
+%files -n simp-environment-selinux-policy
+%defattr(0640,root,root,0750)
+%{_datadir}/selinux/*/%{selinux_policy}
 
-# Make sure we actually have a working puppet installation and fail otherwise
-puppet_user=`puppet config print user 2> /dev/null`
-
-if [ -z "${puppet_user}" ]; then
-  echo "Error: Could not determine Puppet User, please check your Puppet installation"
-  exit 1;
-fi
-
-%post
-PATH=/opt/puppetlabs/bin:$PATH
-export PATH
-
-# Set file permissions correctly on either POSS or PE through introspection
-puppet_user=`puppet config print user 2> /dev/null`
-puppet_group=`puppet config print group 2> /dev/null`
-
-chown -R ${puppet_user}:${puppet_group} %{prefix}/writable/simp_autofiles
-chgrp ${puppet_group} %{prefix}/simp/environment.conf
-chgrp -R ${puppet_group} %{prefix}/simp/data
-chgrp -R ${puppet_group} %{prefix}/simp/manifests
-chgrp -R ${puppet_group} %{prefix}/secondary/site_files
-
+%post -n simp-environment-selinux-policy
 # Build an load policy to set selinux context to enable puppet
 # to read from /var/simp directories.
 /usr/sbin/semodule -n -i %{_datadir}/selinux/packages/%{selinux_policy}
@@ -190,24 +174,7 @@ if /usr/sbin/selinuxenabled; then
   /sbin/fixfiles -F -R %{name} restore || :
 fi
 
-chmod 0770 %{prefix}
-
-# Check if the directory for secondary environments exists and create it if it does not
-sec_dir="/var/simp"
-if [ ! -d $sec_dir ]; then
-  mkdir $sec_dir
-  chown root:root $sec_dir
-  chmod 755 $sec_dir
-fi
-if [ ! -d $sec_dir/environments ]; then
-  mkdir $sec_dir/environments
-  chown root:root $sec_dir
-  chmod 755 $sec_dir
-fi
-
-# Yum repo setup is now in simp-utils
-
-%postun
+%postun -n simp-environment-selinux-policy
 # Post uninstall stuff
 if [ $1 -eq 0 ]; then
   /usr/sbin/semodule -n -r %{selinux_policy_short}
@@ -215,14 +182,22 @@ if [ $1 -eq 0 ]; then
     /usr/sbin/load_policy
     /sbin/fixfiles -R %{name} restore || :
   fi
-
 fi
 
+%changelog -n simp-environment-selinux-policy
+* Tue Apr 30 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 1.0.0-0
+- Initial creation of the simp-environment-selinux-policy subpackage
+
 %changelog
+* Tue Apr 30 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.4.0-0
+- Rename the RPM to simp-environment-skeleton
+- Remove all SELinux configuration items
+- Removed all manipulation to set up anything under /var/simp since this should
+  now be done by external code at system setup time.
+
 * Wed Apr 24 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.4.0-0
-- Split the Environment files into the three seperate environment directories.
-- remove yum logic (it is moved to simp-utils)
-* Tue Apr 09 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.4.0-0
+- Split the Environment files into the three separate environment directories.
+- Removed yum logic (it is moved to simp-utils)
 - Reworked packaging so this RPM no longer modifies files used by a user's
   'simp' Puppet environment
   - Changed installation directory from %{_var} file to %{prefix} for the
@@ -232,8 +207,8 @@ fi
     in /var/simp/environments/simp.
   - Removed erroneous %config(noreplace) directives on files installed
     in /usr/share/simp/environments/simp.
-  - Removed actions that will be implemented by a simp cli command
-    - selinux fixfiles on the /var/simp directory during installation.
+  - Removed actions that will be implemented by a simp-cli command
+    - Selinux fixfiles on the /var/simp directory during installation.
     - cacertkey creation from post install.
     - Calls to the RPM helper script in the %post and %postun sections.
       This means the default environment is no longer copied into
@@ -299,7 +274,7 @@ fi
 * Thu Oct 26 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.2.5-0
 - selinux policy in module simp-environment was changing settings on rsync files not in the
   simp environment and removing their selinux context.  This caused DNS, DHCP to fail
-  if they were running in an enviroment by a name other then simp.
+  if they were running in an environment by a name other then simp.
 - moved selinux policy to simp-environment module and had simp rsync require this module
   so the selinux policy for /var/simp directory would be in one spot.
   file contexts are not overwritten by it.
@@ -822,3 +797,4 @@ fi
   to vmware systems by default, so this will not affect any other types of host
   but is one less thing to remember to include.
 - Changed the verify variable for syslog to 2.
+
