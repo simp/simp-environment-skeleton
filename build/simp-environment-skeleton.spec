@@ -47,7 +47,7 @@ Prefix: /usr/share/simp/environment-skeleton
 
 %package -n simp-environment-selinux-policy
 Summary: SELinux Policy for deployed SIMP environment resources
-Version: 7.0.0
+Version: 1.0.0
 Release: 0%{?dist}
 License: Apache License 2.0
 Requires: libselinux-utils
