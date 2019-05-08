@@ -1,4 +1,4 @@
-#IN order for puppetserver to access files it needs a puppet_var_lib_t context.
+# In order for puppetserver to access files it needs a puppet_var_lib_t context.
 /var/simp(/.*)?                                                                                                     system_u:object_r:puppet_var_lib_t:s0
 # Rsysnc files need to keep there context and should not default to var or puppet defaults.
 # The following line is meant to stop those defaults.  This means anything not set
