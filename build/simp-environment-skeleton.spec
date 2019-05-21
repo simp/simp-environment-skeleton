@@ -33,7 +33,7 @@
 
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.0.0
+Version: 7.0.1
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -185,6 +185,10 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog -n simp-environment-selinux-policy
+* Tue May 21 2019 Jeanne Greulich <jeanne.greulich@@onyxpoint.com> - 7.0.1-0
+- Increment the version of the selinux policy in the hopes that it will not
+  be removed when simp-environment is removed.
+
 * Tue Apr 30 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.0.0-0
 - Creation of a new simp-environment-skeleton package (7.0.0)
 - Creation of a new simp-environment-selinux-policy subpackage (1.0.0)
