@@ -28,7 +28,7 @@
 
 %global selinux_variants targeted
 
-%define selinux_policy_short simp-environment
+%define selinux_policy_short simp-environment-rsync
 %define selinux_policy %{selinux_policy_short}.pp
 
 Summary: The SIMP Environment Skeleton
