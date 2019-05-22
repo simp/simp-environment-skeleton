@@ -30,6 +30,7 @@
 
 %define selinux_policy_short simp-environment-rsync
 %define selinux_policy %{selinux_policy_short}.pp
+%define old_selinux_policy simp-environment
 
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
@@ -168,6 +169,12 @@ cd -
 %post -n simp-environment-selinux-policy
 # Build an load policy to set selinux context to enable puppet
 # to read from /var/simp directories.
+# There are conflicts between the old and new policy. Remove the old one
+# before loading the new one.
+/usr/sbin/semodule --list | grep -w %{old_selinux_policy}
+if [ $? -eq 0 ]; then
+  /usr/sbin/semodule -r %{old_selinux_policy}
+fi
 /usr/sbin/semodule -n -i %{_datadir}/selinux/packages/%{selinux_policy}
 if /usr/sbin/selinuxenabled; then
   /usr/sbin/load_policy
