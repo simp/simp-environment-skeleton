@@ -171,7 +171,7 @@ cd -
 # to read from /var/simp directories.
 # There are conflicts between the old and new policy. Remove the old one
 # before loading the new one.
-/usr/sbin/semodule --list | grep -w %{old_selinux_policy}
+/usr/sbin/semodule --list | grep "^%{old_selinux_policy}\s"
 if [ $? -eq 0 ]; then
   /usr/sbin/semodule -r %{old_selinux_policy}
 fi
