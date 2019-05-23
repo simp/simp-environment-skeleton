@@ -28,12 +28,13 @@
 
 %global selinux_variants targeted
 
-%define selinux_policy_short simp-environment
+%define selinux_policy_short simp-environment-rsync
 %define selinux_policy %{selinux_policy_short}.pp
+%define old_selinux_policy simp-environment
 
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.0.0
+Version: 7.0.1
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -47,7 +48,7 @@ Prefix: /usr/share/simp/environment-skeleton
 
 %package -n simp-environment-selinux-policy
 Summary: SELinux Policy for deployed SIMP environment resources
-Version: 1.0.0
+Version: 1.0.1
 Release: 0%{?dist}
 License: Apache License 2.0
 Requires: libselinux-utils
@@ -168,6 +169,12 @@ cd -
 %post -n simp-environment-selinux-policy
 # Build an load policy to set selinux context to enable puppet
 # to read from /var/simp directories.
+# There are conflicts between the old and new policy. Remove the old one
+# before loading the new one.
+/usr/sbin/semodule --list | grep "^%{old_selinux_policy}\s"
+if [ $? -eq 0 ]; then
+  /usr/sbin/semodule -r %{old_selinux_policy}
+fi
 /usr/sbin/semodule -n -i %{_datadir}/selinux/packages/%{selinux_policy}
 if /usr/sbin/selinuxenabled; then
   /usr/sbin/load_policy
@@ -185,6 +192,10 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog -n simp-environment-selinux-policy
+* Tue May 21 2019 Jeanne Greulich <jeanne.greulich@@onyxpoint.com> - 7.0.1-0
+- Rename selinux policy so it is not removed by the obsoletion of simp-environment,
+  when upgrading to simp 6.4.
+
 * Tue Apr 30 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.0.0-0
 - Creation of a new simp-environment-skeleton package (7.0.0)
 - Creation of a new simp-environment-selinux-policy subpackage (1.0.0)
