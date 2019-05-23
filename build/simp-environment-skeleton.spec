@@ -193,7 +193,7 @@ fi
 
 %changelog -n simp-environment-selinux-policy
 * Tue May 21 2019 Jeanne Greulich <jeanne.greulich@@onyxpoint.com> - 7.0.1-0
-- Rename selinux polixy so it is not removed by the obsoletion of simp-environment
+- Rename selinux policy so it is not removed by the obsoletion of simp-environment,
   when upgrading to simp 6.4.
 
 * Tue Apr 30 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.0.0-0
