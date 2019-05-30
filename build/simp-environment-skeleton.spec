@@ -192,6 +192,10 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog -n simp-environment-selinux-policy
+* Thu May 30 2019 Chris Tessmer <chris.tessmer@onyxpoint.com> - 7.1.0-0
+- Rename `simp` environment directory to `puppet`
+- Rename `simp` environment string to %%SKELETON_ENVIRONMENT%%
+
 * Tue May 21 2019 Jeanne Greulich <jeanne.greulich@@onyxpoint.com> - 7.0.1-0
 - Rename selinux policy so it is not removed by the obsoletion of simp-environment,
   when upgrading to simp 6.4.
