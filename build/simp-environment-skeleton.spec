@@ -138,7 +138,7 @@ cd -
 
 %{prefix}/puppet
 %attr(0750,-,-) %{prefix}/puppet
-%{prefix}/puppet/environment.conf
+%{prefix}/puppet/environment.conf.TEMPLATE
 %{prefix}/puppet/hiera.yaml
 %{prefix}/puppet/data/hosts/puppet.your.domain.yaml
 %{prefix}/puppet/data/hostgroups/default.yaml
