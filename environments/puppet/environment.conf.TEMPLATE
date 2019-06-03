@@ -1,0 +1,17 @@
+# environment.conf - specify this environment's settings
+#
+#   See: https://puppet.com/docs/puppet/latest/config_file_environment.html
+#
+
+# modulepath - the list of directories Puppet will load modules from.
+#
+# NOTE: absolute paths in this list  provide external/site-specific module
+# paths that should not be modified by Code Manager or r10k.
+#
+# Directory path(s) ending in 'site_files' are used by the SIMP stack to
+# distribute certain files (e.g., PKI certs, kerberos keytabs) via Puppet.
+# If removed, catalogs using these SIMP features will fail to compile.
+#
+# Do *not* remove `modules` or `basemodulepath` from this line!
+modulepath = site:modules:/var/simp/environments/%%SKELETON_ENVIRONMENT%%/site_files:$basemodulepath
+environment_timeout = 0

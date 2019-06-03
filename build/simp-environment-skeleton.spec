@@ -34,7 +34,7 @@
 
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.0.1
+Version: 7.1.0
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -105,7 +105,7 @@ cd -
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 
 # Make your directories here.
-mkdir -p %{buildroot}/%{prefix}/simp/data/hostgroups
+mkdir -p %{buildroot}/%{prefix}/puppet/data/hostgroups
 mkdir -p %{buildroot}/%{prefix}/writable/simp_autofiles
 mkdir -p %{buildroot}/%{prefix}/secondary/site_files/krb5_files/files/keytabs
 mkdir -p %{buildroot}/%{prefix}/secondary/site_files/pki_files/files/keydist/cacerts
@@ -136,17 +136,17 @@ cd -
 %attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist
 %attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist/cacerts
 
-%{prefix}/simp
-%attr(0750,-,-) %{prefix}/simp
-%{prefix}/simp/environment.conf
-%{prefix}/simp/hiera.yaml
-%{prefix}/simp/data/hosts/puppet.your.domain.yaml
-%{prefix}/simp/data/hostgroups/default.yaml
-%{prefix}/simp/data/scenarios/simp.yaml
-%{prefix}/simp/data/scenarios/simp_lite.yaml
-%{prefix}/simp/data/scenarios/poss.yaml
-%{prefix}/simp/data/default.yaml
-%{prefix}/simp/manifests/site.pp
+%{prefix}/puppet
+%attr(0750,-,-) %{prefix}/puppet
+%{prefix}/puppet/environment.conf.TEMPLATE
+%{prefix}/puppet/hiera.yaml
+%{prefix}/puppet/data/hosts/puppet.your.domain.yaml
+%{prefix}/puppet/data/hostgroups/default.yaml
+%{prefix}/puppet/data/scenarios/simp.yaml
+%{prefix}/puppet/data/scenarios/simp_lite.yaml
+%{prefix}/puppet/data/scenarios/poss.yaml
+%{prefix}/puppet/data/default.yaml
+%{prefix}/puppet/manifests/site.pp
 
 %{prefix}/secondary/FakeCA
 %{prefix}/secondary/FakeCA/togen
@@ -192,6 +192,11 @@ if [ $1 -eq 0 ]; then
 fi
 
 %changelog -n simp-environment-selinux-policy
+* Thu May 30 2019 Chris Tessmer <chris.tessmer@onyxpoint.com> - 7.1.0-0
+- Rename `simp` environment directory to `puppet`
+- Rename `simp` environment string to %%SKELETON_ENVIRONMENT%%
+- Rename template `environment.conf` `environment.conf.template`
+
 * Tue May 21 2019 Jeanne Greulich <jeanne.greulich@@onyxpoint.com> - 7.0.1-0
 - Rename selinux policy so it is not removed by the obsoletion of simp-environment,
   when upgrading to simp 6.4.
