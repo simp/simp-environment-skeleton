@@ -84,6 +84,10 @@ cp -r environments/* %{buildroot}/%{prefix}
 - Rename the package to 'simp-environment-skeleton' to more accurately portray
   its purpose.
 - Remove all SELinux components and add a dependency on 'simp-selinux-policy'
+- Rename `simp` environment directory to `puppet`
+- Rename template `environment.conf` `environment.conf.template` and
+  within that file, rename the `simp` environment string to
+  %%SKELETON_ENVIRONMENT%%.
 
 * Tue Apr 09 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 7.0.0-0
 - Reworked packaging so this RPM no longer modifies files used by a user's
