@@ -35,4 +35,7 @@ hierarchy:
   - name: SIMP specific data - Please do not modify
     paths:
     - "simp_config_settings.yaml"
+    - "scenarios/%{facts.os.family}/%{::simp_scenario}.yaml"
+    - "scenarios/%{facts.os.name}/%{facts.os.release.full}/%{::simp_scenario}.yaml"
+    - "scenarios/%{facts.os.name}/%{facts.os.release.major}/%{::simp_scenario}.yaml"
     - "scenarios/%{::simp_scenario}.yaml"

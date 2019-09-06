@@ -1,7 +1,7 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.1.0
-Release: 0
+Version: 7.1.1
+Release: 0%{?dist}
 License: Apache License 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -36,6 +36,12 @@ mkdir -p %{buildroot}/%{prefix}/secondary/site_files/pki_files/files/keydist/cac
 
 cp -r environments/* %{buildroot}/%{prefix}
 
+%if 0%{?rhel} <= 7
+  rm %{buildroot}/%{prefix}/puppet/data/hosts/puppet.your.domain.el8.yaml
+%else
+  mv -f %{buildroot}/%{prefix}/puppet/data/hosts/puppet.your.domain.el8.yaml %{buildroot}/%{prefix}/puppet/data/hosts/puppet.your.domain.yaml
+%endif
+
 %clean
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 
@@ -59,6 +65,8 @@ cp -r environments/* %{buildroot}/%{prefix}
 %{prefix}/puppet/hiera.yaml
 %{prefix}/puppet/data/hosts/puppet.your.domain.yaml
 %{prefix}/puppet/data/hostgroups/default.yaml
+%{prefix}/puppet/data/scenarios/RedHat/8/simp.yaml
+%{prefix}/puppet/data/scenarios/CentOS/8/simp.yaml
 %{prefix}/puppet/data/scenarios/simp.yaml
 %{prefix}/puppet/data/scenarios/simp_lite.yaml
 %{prefix}/puppet/data/scenarios/poss.yaml
@@ -80,6 +88,17 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0750,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Fri Sep 06 2019 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 7.1.1-0
+- Added OS version directories under the hiera architecture to allow for different
+  settings for different scenarios on different OS.  Since TCP Wrappers was
+  removed from RedHat 8, the setting for simp_options::tcpwrappers is
+  set to false in the simp scenario for RedHat and Centos major version 8.
+- Made the data in the puppet.your.domain.yaml that is installed in the
+  environment skeleton directory specific to the version it is being installed
+  on.  (The only difference at this time is the simp_options::tcpwrappers setting)
+  This makes this rpm distribution specfic and was done to minimized the changes
+  for simp-cli for building new environments.
+
 * Wed Jun 26 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.0-0
 - Rename the package to 'simp-environment-skeleton' to more accurately portray
   its purpose.
