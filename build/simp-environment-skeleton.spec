@@ -1,6 +1,6 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.1.0
+Version: 7.1.1
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -58,6 +58,7 @@ cp -r environments/* %{buildroot}/%{prefix}
 %{prefix}/puppet/environment.conf.TEMPLATE
 %{prefix}/puppet/hiera.yaml
 %{prefix}/puppet/data/hosts/puppet.your.domain.yaml
+%{prefix}/puppet/data/hosts/pe-puppet.your.domain.yaml
 %{prefix}/puppet/data/hostgroups/default.yaml
 %{prefix}/puppet/data/scenarios/simp.yaml
 %{prefix}/puppet/data/scenarios/simp_lite.yaml
@@ -80,6 +81,9 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0750,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Mon Sep 02 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.1-0
+- Add a PE-suitable puppet YAML data template.
+
 * Wed Jun 26 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.0-0
 - Rename the package to 'simp-environment-skeleton' to more accurately portray
   its purpose.
