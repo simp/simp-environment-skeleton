@@ -1,6 +1,6 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.1.1-1
+Version: 7.1.1
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
@@ -76,7 +76,7 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
-* Fri Sep 27 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 7.1.1-1
+* Fri Sep 27 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 7.1.1-0
 - Changed permissions for files and directories to be world readable
 - Removed executable permissions from non-script files
 
