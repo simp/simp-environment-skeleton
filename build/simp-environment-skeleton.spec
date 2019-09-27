@@ -1,6 +1,6 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.1.1
+Version: 7.1.1-1
 Release: 0
 License: Apache License 2.0
 Group: Applications/System
