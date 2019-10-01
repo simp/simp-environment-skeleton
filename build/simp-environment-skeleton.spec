@@ -40,21 +40,20 @@ cp -r environments/* %{buildroot}/%{prefix}
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 
 %files
-%defattr(0640,root,root,0750)
+%defattr(0644,root,root,755)
 %{prefix}
-%attr(0750,-,-) %{prefix}/writable/simp_autofiles
+%{prefix}/writable/simp_autofiles
 
-%attr(0750,-,-) %{prefix}/secondary/site_files
-%attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files
-%attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files/files
-%attr(0750,-,-) %{prefix}/secondary/site_files/krb5_files/files/keytabs
-%attr(0750,-,-) %{prefix}/secondary/site_files/pki_files
-%attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files
-%attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist
-%attr(0750,-,-) %{prefix}/secondary/site_files/pki_files/files/keydist/cacerts
+%{prefix}/secondary/site_files
+%{prefix}/secondary/site_files/krb5_files
+%{prefix}/secondary/site_files/krb5_files/files
+%{prefix}/secondary/site_files/krb5_files/files/keytabs
+%{prefix}/secondary/site_files/pki_files
+%{prefix}/secondary/site_files/pki_files/files
+%{prefix}/secondary/site_files/pki_files/files/keydist
+%{prefix}/secondary/site_files/pki_files/files/keydist/cacerts
 
 %{prefix}/puppet
-%attr(0750,-,-) %{prefix}/puppet
 %{prefix}/puppet/environment.conf.TEMPLATE
 %{prefix}/puppet/hiera.yaml
 %{prefix}/puppet/data/hosts/puppet.your.domain.yaml
@@ -71,16 +70,16 @@ cp -r environments/* %{buildroot}/%{prefix}
 %{prefix}/secondary/FakeCA/usergen
 %{prefix}/secondary/FakeCA/ca.cnf
 %{prefix}/secondary/FakeCA/user.cnf
-%{prefix}/secondary/FakeCA/clean.sh
-%{prefix}/secondary/FakeCA/gencerts_common.sh
-%{prefix}/secondary/FakeCA/gencerts_nopass.sh
-%{prefix}/secondary/FakeCA/usergen_nopass.sh
-%attr(0750,-,-) %{prefix}/secondary/FakeCA/clean.sh
-%attr(0750,-,-) %{prefix}/secondary/FakeCA/gencerts_common.sh
-%attr(0750,-,-) %{prefix}/secondary/FakeCA/gencerts_nopass.sh
-%attr(0750,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
+%attr(0755,-,-) %{prefix}/secondary/FakeCA/clean.sh
+%attr(0755,-,-) %{prefix}/secondary/FakeCA/gencerts_common.sh
+%attr(0755,-,-) %{prefix}/secondary/FakeCA/gencerts_nopass.sh
+%attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Fri Sep 27 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 7.1.1-0
+- Changed permissions for files and directories to be world readable
+- Removed executable permissions from non-script files
+
 * Mon Sep 02 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.1-0
 - Add a PE-suitable puppet YAML data template.
 
