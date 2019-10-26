@@ -16,3 +16,8 @@ format (one per line) and run the 'usergen.sh' script.
 The output of usergen will be placed in 'output/users'.
 
 Run the 'clean.sh' script to reset to a clean state.
+
+You can set the 'KEYDIST' environment variable to change the default output
+directory for generated certificates.
+
+    KEYDIST=/my/target/dir ./gencerts_nopass.sh

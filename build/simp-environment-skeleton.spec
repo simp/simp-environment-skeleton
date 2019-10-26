@@ -1,8 +1,12 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.1.1
+Version: 7.1.2
 Release: 0
-License: Apache License 2.0
+# The entire source code is Apache License 2.0 except the following, which are
+# OpenSSL:
+#  * environments/secondary/FakeCA/CA
+#  * environments/secondary/FakeCA/CA_batch
+License: Apache License 2.0 and OpenSSL
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -76,6 +80,13 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Sat Oct 26 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.2-0
+- FakeCA Updates
+  - Allow users to specify an alternate output directory via a KEYDIST
+    environment variable
+  - Consolidate the certificate request and revocation code
+  - Certificate revocation now runs in linear time
+
 * Fri Sep 27 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 7.1.1-0
 - Changed permissions for files and directories to be world readable
 - Removed executable permissions from non-script files

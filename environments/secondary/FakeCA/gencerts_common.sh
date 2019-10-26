@@ -2,8 +2,11 @@
 
 # Common functions for gencerts items.
 
-keydist="`dirname $0`/../site_files/pki_files/files/keydist"
-CA_src='/etc/pki/tls/misc/CA'
+if [ ! -z "${KEYDIST}" ]; then
+  keydist="${KEYDIST}"
+else
+  keydist="`dirname $0`/../site_files/pki_files/files/keydist"
+fi
 
 export CATOP="`pwd`/demoCA"
 
@@ -20,29 +23,18 @@ create_ca () {
 
     sed -i "s/^\([[:space:]]*commonName_default\).*/\1 \t\t= Fake Org Fake CA - `uuidgen | cut -f1 -d'-'`/" ca.cnf;
 
+    CA='./CA'
+
     if [ $batch -eq 0 ]; then
-      if [ ! -f 'CA_batch' ]; then
-        sed -e 's/^REQ=\(.*\) req\(.*\)"/REQ=\1 req \2 -batch -passout file:cacertkey"/' $CA_src | \
-          sed -e 's/^CA=\(.*\) ca\(.*\)"/CA=\1 ca \2 -passin file:cacertkey"/' | \
-          sed -e 's/read FILE/#read FILE/' > 'CA_batch'
-
-        chmod +x 'CA_batch'
-      fi
-
       CA='./CA_batch'
-    else
-      if [ ! -f 'CA' ]; then
-        sed -e 's/^REQ=\(.*\) req\(.*\)"/REQ=\1 req \2 -passout file:cacertkey"/' $CA_src | \
-          sed -e 's/^CA=\(.*\) ca\(.*\)"/CA=\1 ca \2 -passin file:cacertkey"/' > 'CA'
-
-        chmod +x 'CA'
-      fi
-
-      CA='./CA'
     fi
 
     $CA -newca
-    wait;
+
+    if [ $? -ne 0 ]; then
+      echo "Error creating CA"
+      exit 1
+    fi
   fi
 
   if [ ! -d output/conf ]; then
@@ -59,7 +51,6 @@ create_ca () {
 }
 
 distribute_ca () {
-
   cacert="demoCA/cacert.pem";
   hash=`openssl x509 -in $cacert -hash -noout`;
   cacerts="${keydist}/cacerts";
@@ -91,6 +82,79 @@ distribute_ca () {
     cd -;
   fi
 
-  chmod -R u+rwX,g+rX,o-rwx $keydist;
-  chown -R root.`/opt/puppetlabs/bin/puppet config print group 2>/dev/null` $keydist;
+  if [[ $UID -eq 0 ]]; then
+    chmod -R u+rwX,g+rX,o-rwx $keydist;
+    chown -R root.`/opt/puppetlabs/bin/puppet config print group 2>/dev/null` $keydist;
+  fi
+}
+
+req_cert () {
+  cert_id=$1
+  dist_dir=$2
+
+  if [ -z "${cert_id}" ]; then
+    echo 'Error: You must pass a target name directory to req_cert()'
+    return 1
+  fi
+
+  if [ -z "${dist_dir}" ]; then
+    echo 'Error: You must pass a target output directory to req_cert()'
+    return 1
+  fi
+
+  echo 'Creating certificate request'
+
+  reqfile="working/${cert_id}.req.pem"
+  staging="working/${cert_id}/staging"
+
+  mkdir -p "${staging}"
+
+  echo 'Running openssl req'
+
+  openssl req -new -nodes -keyout "${staging}/${cert_id}.pem" -out "${reqfile}" -batch
+
+  req_subj=`openssl req -in "${reqfile}" -noout -subject | sed -e 's/^subject=//' | sed -e 's/[[:space:]]=[[:space:]]/=/g' | sed -e 's_[[:space:]]*,[[:space:]]*_/_g'`
+
+  if [ -z "${req_subj}" ]; then
+    echo "Error: Could not determine the subject in '${reqfile}'"
+    return 1
+  fi
+
+  # The fourth field of index.txt is the certificate hash
+  existing_certs=`grep "^V[[:space:]].*${req_subj}" demoCA/index.txt | cut -f4`
+
+  for cert in $existing_certs; do
+    if [ ! -d demoCA/revoked ]; then
+      mkdir demoCA/revoked
+    fi
+
+    certfile="demoCA/newcerts/${cert}.pem"
+
+    echo "Found existing certificate for ${cert_id}, revoking!"
+    OPENSSL_CONF=ca.cnf openssl ca -passin file:cacertkey -revoke ${certfile} -crl_reason superseded
+    mv $certfile demoCA/revoked
+  done
+
+  echo "Running openssl ca"
+  openssl ca -passin file:cacertkey -batch -out ${staging}/${cert_id}.pub -infiles ${reqfile}
+
+  cat ${staging}/${cert_id}.pub >> ${staging}/${cert_id}.pem
+
+  echo 'Validating newly created certs'
+
+  pub_sig=`openssl x509 -noout -modulus -in ${staging}/${cert_id}.pub | openssl sha256`
+  priv_sig=`openssl rsa -noout -modulus -in ${staging}/${cert_id}.pem | openssl sha256`
+
+  if [ "${pub_sig}" != "${priv_sig}" ]; then
+    echo "Error: Private key does not match public key for '${cert_id}'"
+    return 2
+  else
+    if [ ! -d "${dist_dir}" ]; then
+      echo "Creating directory '${dist_dir}'"
+      mkdir -p "${dist_dir}/cacerts"
+    fi
+
+    cp -r "${staging}"/* "${dist_dir}"
+    return 0
+  fi
 }
