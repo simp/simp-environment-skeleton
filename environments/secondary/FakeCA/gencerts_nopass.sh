@@ -1,15 +1,17 @@
 #!/bin/sh
 
-source `dirname $0`/gencerts_common.sh;
+source `dirname $0`/gencerts_common.sh
 
-check_cacerts;
+check_cacerts
 
-batch=1;
+batch=1
 if [ "$1" == "auto" ]; then
-  batch=0;
+  batch=0
 fi
 
-create_ca;
+create_ca
+
+exit_code=0
 
 for hosts in `cat togen`; do
   hosts=`echo $hosts | sed -e 's/[ \t]//g'`
@@ -24,59 +26,36 @@ for hosts in `cat togen`; do
       if [ $? -eq 0 ]; then
         # This is required due to some applications not properly supporting the
         # IP version of subjectAltName.
-        prefixes='IP DNS';
+        prefixes='IP DNS'
       else
-        prefixes='DNS';
+        prefixes='DNS'
       fi
 
       for prefix in $prefixes; do
-        if [ "$altnames" != ''  ];
-        then
-          altnames+=",$prefix:$i";
+        if [ "$altnames" != ''  ]; then
+          altnames+=",$prefix:$i"
         else
-          altnames+="$prefix:$i";
-        fi;
+          altnames+="$prefix:$i"
+        fi
       done
     done
 
     echo "processing $hname"
-    sed -e "s/#HOSTNAME#/$hname/" -e "s/#ALTNAMES#/$altnames/" default_altnames.cnf > output/conf/$hname.cnf;
+    sed -e "s/#HOSTNAME#/$hname/" -e "s/#ALTNAMES#/$altnames/" default_altnames.cnf > output/conf/$hname.cnf
   else
     echo "processing $hname"
-    sed -e "s/#HOSTNAME#/$hname/" default.cnf > output/conf/$hname.cnf;
+    sed -e "s/#HOSTNAME#/$hname/" default.cnf > output/conf/$hname.cnf
   fi
 
-  # Revoke any existing certs.
-  for cert in `find demoCA/newcerts -type f` `find demoCA/certs -type f`; do
-    if [ "$hname" == "`openssl x509 -subject -noout -in $cert | rev | cut -f1 -d'=' | rev`" ]; then
-      echo "Found existing certificate for $hname, revoking!"
+  export OPENSSL_CONF=output/conf/$hname.cnf
 
-      if [ ! -d demoCA/revoked ]; then
-        mkdir demoCA/revoked;
-      fi
+  req_cert $hname "${keydist}/${hname}"
 
-      OPENSSL_CONF=ca.cnf openssl ca -passin file:cacertkey -revoke $cert -crl_reason superseded
-      mv $cert demoCA/revoked;
-    fi
-
-  done
-
-  export OPENSSL_CONF=output/conf/$hname.cnf;
-
-  echo "running mkdir ${keydist}/${hname}"
-  if [ -d "${keydist}/${hname}" ]; then
-    echo "directory $hname exists"
-  else
-    mkdir -p "${keydist}/${hname}/cacerts"
-  fi
-
-  echo "running openssl req"
-  openssl req -new -nodes -keyout ${keydist}/${hname}/${hname}.pem -out working/"${hname}"req.pem -days 360 -batch;
-  echo "running openssl ca"
-  openssl ca -passin file:cacertkey -batch -out ${keydist}/${hname}/${hname}.pub -infiles working/"${hname}"req.pem
-
-  cat ${keydist}/${hname}/${hname}.pub >> ${keydist}/${hname}/${hname}.pem
-
+  exit_code=$?
 done
 
-distribute_ca;
+if [[ $exit_code -eq 0 ]]; then
+  distribute_ca
+fi
+
+exit $exit_code
