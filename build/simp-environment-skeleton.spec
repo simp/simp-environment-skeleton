@@ -80,6 +80,10 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Mon Mar 23 2020 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 7.1.2-0
+- FakeCA Updates
+  - When running in batch mode do not request input from the user.
+
 * Sat Oct 26 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.2-0
 - FakeCA Updates
   - Allow users to specify an alternate output directory via a KEYDIST
