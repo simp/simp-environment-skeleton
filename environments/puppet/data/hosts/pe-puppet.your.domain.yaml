@@ -41,5 +41,5 @@ simp::server::allow_simp_user: true
 rsyslog::udp_server: true
 rsyslog::udp_listen_address: '127.0.0.1'
 
-classes:
+simp::server::classes:
   - 'simp::server'

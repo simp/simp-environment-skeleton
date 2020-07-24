@@ -10,7 +10,7 @@
 # nodes in this group. For example, to manage gitlab on these machines:
 #
 # ```
-# classes:
+# simp::classes:
 #   - simp_gitlab
 #
 # simp_gitlab::gitlab_options:

@@ -1,6 +1,6 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.1.2
+Version: 7.1.3
 Release: 0
 # The entire source code is Apache License 2.0 except the following, which are
 # OpenSSL:
@@ -80,6 +80,10 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Wed Jun 22 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.3-0
+- Replace `classes` with `simp::classes` and `simp::server::classes` as
+  appropriate in example Hiera YAML files.
+
 * Mon Mar 23 2020 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 7.1.2-0
 - FakeCA Updates
   - When running in batch mode do not request input from the user.
