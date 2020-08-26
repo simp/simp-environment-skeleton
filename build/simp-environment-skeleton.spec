@@ -80,6 +80,10 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Wed Aug 26 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.4-0
+- Ensure that the server hieradata defaults have 'simp::server' in the
+  'simp::classes' array. Otherwise, it will never get picked up.
+
 * Wed Jun 22 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.3-0
 - Replace `classes` with `simp::classes` and `simp::server::classes` as
   appropriate in example Hiera YAML files.
