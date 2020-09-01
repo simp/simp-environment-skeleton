@@ -74,12 +74,16 @@ cp -r environments/* %{buildroot}/%{prefix}
 %{prefix}/secondary/FakeCA/usergen
 %{prefix}/secondary/FakeCA/ca.cnf
 %{prefix}/secondary/FakeCA/user.cnf
+%attr(0755,-,-) %{prefix}/secondary/FakeCA/CA
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/clean.sh
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/gencerts_common.sh
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/gencerts_nopass.sh
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Tue Sep 01 2020 Liz Nemsick <lnemsick.simp@gmail.com> - 7.1.4-0
+- Fixed a bug in which the FakeCA CA script was not executable.
+
 * Wed Aug 26 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.1.4-0
 - Ensure that the server hieradata defaults have 'simp::server' in the
   'simp::classes' array. Otherwise, it will never get picked up.
