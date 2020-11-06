@@ -1,7 +1,7 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.1.4
-Release: 0
+Version: 7.2.0
+Release: 1
 # The entire source code is Apache License 2.0 except the following, which are
 # OpenSSL:
 #  * environments/secondary/FakeCA/CA
@@ -81,6 +81,10 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Wed Nov 04 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.2.0-1
+- Ensure that firewalld is used by default in the applicable SIMP scenarios.
+- Bump the Release to '1' in the RPM spec file since this is stable.
+
 * Tue Sep 01 2020 Liz Nemsick <lnemsick.simp@gmail.com> - 7.1.4-0
 - Fixed a bug in which the FakeCA CA script was not executable.
 
