@@ -1,7 +1,7 @@
 These scripts can be used to act as a fake CA.
 
 Enter the hostnames of the certificates that you wish to create in the file
-'togen', one per line and run the 'gencerts.sh' script.
+'togen', one per line and run the 'gencerts_nopass.sh' script.
 
 If you wish to use alternate DNS names, separate the names with commas and no
 spaces like the following example:
@@ -9,7 +9,7 @@ spaces like the following example:
    primary.name,alt.name.1,alt.name.2,ip.addr.1,ip.addr.2
 
 To generate user certificates, add users to the 'usergen' file in the following
-format (one per line) and run the 'usergen.sh' script.
+format (one per line) and run the 'usergen_nopass.sh' script.
 
    username  email-address
 
@@ -21,3 +21,16 @@ You can set the 'KEYDIST' environment variable to change the default output
 directory for generated certificates.
 
     KEYDIST=/my/target/dir ./gencerts_nopass.sh
+
+You can pass 'auto' as a command line argument to gencerts_nopass.sh
+or usergen_nopass.sh, to use defaults when it first creates the CA.
+
+    ./gencerts_nopass.sh auto
+
+       or
+
+    ./usergen_nopass.sh atuo
+
+* Otherwise, you will be prompted for the CA-specific information the
+  first time either script is run.
+* The default values are set by the CA script.
