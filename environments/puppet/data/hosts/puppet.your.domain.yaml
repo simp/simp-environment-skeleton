@@ -29,7 +29,6 @@ puppetdb::master::config::restart_puppet: false
 
 ### Secure SIMP Options ###
 simp_options::auditd: true
-simp_options::clamav: true
 simp_options::firewall: true
 iptables::use_firewalld: true
 simp_options::haveged: true

@@ -26,7 +26,6 @@ simp::scenario: 'simp_lite'
 
 # SIMP-lite scenario defaults
 simp_options::auditd: true
-simp_options::clamav: true
 simp_options::haveged: true
 simp_options::logrotate: true
 simp_options::pam: true
