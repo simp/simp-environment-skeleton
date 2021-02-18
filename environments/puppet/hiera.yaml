@@ -4,7 +4,21 @@ defaults:
   datadir: data
   data_hash: yaml_data
 
+  # Important: The adminstrator must generate the keys used in the EYAML
+  # sections using the eyaml command before using eyaml.
+  # See [simp docs] https://simp.readthedocs.io/en/master/HOWTO/20_Puppet/Hiera_eyaml.html for details.
+
 hierarchy:
+
+  - name: Eyaml per-mode data
+    lookup_key: eyaml_lookup_key
+    paths:
+    - "hosts/%{trusted.certname}.eyaml"
+    - "hosts/%{facts.fqdn}.eyaml"
+    - "hosts/%{facts.hostname}.eyaml"
+    options:
+      pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
+      pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
 
   - name: Per-node data
     paths:
@@ -12,9 +26,28 @@ hierarchy:
     - "hosts/%{facts.fqdn}.yaml"
     - "hosts/%{facts.hostname}.yaml"
 
+  - name: Eyaml per domain data
+    lookup_key: eyaml_lookup_key
+    paths:
+    - "domains/%{facts.domain}.eyaml"
+    options:
+      pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
+      pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
+
   - name: Per-domain data
     paths:
-    - "domains/%{facts.domain}.yaml"
+    - "hosts/%{facts.domain}.yaml"
+
+  - name: EYAML per-OS data
+    lookup_key: eyaml_lookup_key
+    paths:
+    - "%{facts.os.family}.eyaml"
+    - "%{facts.os.name}/%{facts.os.release.full}.eyaml"
+    - "%{facts.os.name}/%{facts.os.release.major}.eyaml"
+    - "%{facts.os.name}.eyaml"
+    options:
+      pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
+      pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
 
   - name: Per-OS data
     paths:
@@ -23,16 +56,41 @@ hierarchy:
     - "%{facts.os.name}/%{facts.os.release.major}.yaml"
     - "%{facts.os.name}.yaml"
 
+  - name: EYAML per-hostgroup data
+    lookup_key: eyaml_lookup_key
+    paths:
+    - "hostgroups/%{hostgroup}.eyaml"
+    options:
+      pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
+      pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
+
   - name: Per-hostgroup data - See site.pp for more information
     paths:
-    - "hostgroups/%{::hostgroup}.yaml"
+    - "hostgroups/%{hostgroup}.yaml"
+
+  - name: EYAML General data
+    lookup_key: eyaml_lookup_key
+    paths:
+    - "common.eyaml"
+    options:
+      pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
+      pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
 
   - name: General data
     paths:
     - "default.yaml"
     - "common.yaml"
 
+  - name: EYAML SIMP specific data - Please do not modify
+    lookup_key: eyaml_lookup_key
+    paths:
+    - "simp_config_settings.eyaml"
+    - "scenarios/%{simp_scenario}.eyaml"
+    options:
+      pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
+      pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
+
   - name: SIMP specific data - Please do not modify
     paths:
     - "simp_config_settings.yaml"
-    - "scenarios/%{::simp_scenario}.yaml"
+    - "scenarios/%{simp_scenario}.yaml"
