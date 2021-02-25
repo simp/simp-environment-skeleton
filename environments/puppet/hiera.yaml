@@ -36,7 +36,7 @@ hierarchy:
 
   - name: Per-domain data
     paths:
-    - "hosts/%{facts.domain}.yaml"
+    - "domains/%{facts.domain}.yaml"
 
   - name: EYAML per-OS data
     lookup_key: eyaml_lookup_key
@@ -59,14 +59,14 @@ hierarchy:
   - name: EYAML per-hostgroup data
     lookup_key: eyaml_lookup_key
     paths:
-    - "hostgroups/%{hostgroup}.eyaml"
+    - "hostgroups/%{::hostgroup}.eyaml"
     options:
       pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
       pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
 
   - name: Per-hostgroup data - See site.pp for more information
     paths:
-    - "hostgroups/%{hostgroup}.yaml"
+    - "hostgroups/%{::hostgroup}.yaml"
 
   - name: EYAML General data
     lookup_key: eyaml_lookup_key
@@ -85,7 +85,7 @@ hierarchy:
     lookup_key: eyaml_lookup_key
     paths:
     - "simp_config_settings.eyaml"
-    - "scenarios/%{simp_scenario}.eyaml"
+    - "scenarios/%{::simp_scenario}.eyaml"
     options:
       pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
       pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
@@ -93,4 +93,4 @@ hierarchy:
   - name: SIMP specific data - Please do not modify
     paths:
     - "simp_config_settings.yaml"
-    - "scenarios/%{simp_scenario}.yaml"
+    - "scenarios/%{::simp_scenario}.yaml"
