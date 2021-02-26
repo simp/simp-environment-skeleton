@@ -81,6 +81,9 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Fri Feb 19 2021 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 7.2.1-1
+- Add eyaml hierarchy to hiera.yaml in puppet environment template.
+
 * Tue Feb 02 2021 Liz Nemsick <lnemsick.simp@gmail.com> - 7.2.1-1
 - Removed the obsolete `simp_options::clamav` setting from all hieradata
   files.
