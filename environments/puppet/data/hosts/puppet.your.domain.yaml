@@ -17,16 +17,6 @@ simp_apache::ssl::sslverifyclient: 'none'
 # Make this server a puppetserver
 pupmod::enable_puppet_master: true
 
-# The service name of the Puppet Server service for use with PuppetDB
-#
-# TODO: This should probably be a Fact
-puppetdb::master::config::puppet_service_name: 'puppetserver'
-
-puppetdb::globals::version: 'latest'
-
-# Let pupmod::master::base handle this.
-puppetdb::master::config::restart_puppet: false
-
 ### Secure SIMP Options ###
 simp_options::auditd: true
 simp_options::firewall: true
@@ -61,5 +51,32 @@ rsyslog::udp_listen_address: '127.0.0.1'
 simp::classes:
   - 'simp::server'
 
-simp::server::classes:
-  - 'simp::puppetdb'
+### PuppetDB ###
+#
+# PuppetDB will not be enabled on your server unless you uncomment the
+# 'simp::server::classes' section below.
+
+# simp::server::classes:
+#  - 'simp::puppetdb'
+
+# The following items exist to properly configure PuppetDB if you choose to
+# enable it above.
+
+# The service name of the Puppet Server service for use with PuppetDB
+puppetdb::master::config::puppet_service_name: 'puppetserver'
+
+# The version of PuppetDB that should be installed
+puppetdb::globals::version: 'latest'
+
+# Let pupmod::master::base handle this.
+puppetdb::master::config::restart_puppet: false
+
+# Set the PuppetDB port
+puppetdb::master::config::puppetdb_port: 8139
+
+# Assume that the service is on the same server
+puppetdb::master::config::puppetdb_server: "%{facts.fqdn}"
+
+# Set up node report storage
+puppetdb::master::config::manage_report_processor: true
+puppetdb::master::config::enable_reports: true
