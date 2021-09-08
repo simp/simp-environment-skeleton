@@ -1,6 +1,6 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.2.1
+Version: 7.3.0
 Release: 1
 # The entire source code is Apache License 2.0 except the following, which are
 # OpenSSL:
@@ -81,6 +81,12 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Tue Sep 07 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.3.0-1
+- No longer configure puppetdb on the puppet server by default
+  - Added documentation in the associated hieradata file
+  - Added the necessary configuration to enable puppetdb storage of node reports
+    by default
+
 * Fri Feb 19 2021 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 7.2.1-1
 - Add eyaml hierarchy to hiera.yaml in puppet environment template.
 
