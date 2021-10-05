@@ -1,6 +1,6 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.3.0
+Version: 7.3.1
 Release: 1
 # The entire source code is Apache License 2.0 except the following, which are
 # OpenSSL:
@@ -11,7 +11,11 @@ Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Obsoletes: simp-environment < %{version}
+%if 0%{?rhel} > 7
+Recommends: simp-selinux-policy
+%else
 Requires: simp-selinux-policy
+%endif
 
 Buildarch: noarch
 
@@ -81,6 +85,9 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Tue Oct 05 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.3.1-1
+- Fix EL8 RPM dependencies
+
 * Tue Sep 07 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.3.0-1
 - No longer configure puppetdb on the puppet server by default
   - Added documentation in the associated hieradata file
