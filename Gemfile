@@ -10,7 +10,8 @@ group :test do
   gem 'rspec'
   # Ruby code coverage
   gem 'simplecov'
-  gem 'simp-rake-helpers', ENV.fetch('SIMP_RAKE_HELPERS_VERSION', ['>= 5.5', '<= 6.0.0'])
+  # renovate: datasource=rubygems versioning=ruby
+  gem 'simp-rake-helpers', ENV.fetch('SIMP_RAKE_HELPERS_VERSION', '~> 5.24.0')
 
   gem 'pry'
   gem 'pry-doc'
