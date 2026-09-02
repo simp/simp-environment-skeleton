@@ -10,15 +10,22 @@ Exec {
   ]
 }
 
-# SIMP Scenarios
+# SIMP Scenarios / Feature Sets
 #
-# Set this variable to make use of the different class sets in heiradata/scenarios,
-#   mostly applicable to puppet agents, or, the SIMP server overrides some of these.
+# Set $simp_scenario to select which SIMP feature set (data/feature_sets/*.yaml)
+# applies to your systems. Each feature set switches the simp_options catalysts
+# (auditd, firewall, pam, pki, ...) on or off as a group:
 #   * `simp` - compliant and secure
 #   * `simp_lite` - makes use of many of our modules, but doesn't apply
 #        many prohibitive security or compliance features, svckill
 #   * `poss` - only include pupmod by default to configure the agent
 $simp_scenario = 'simp'
+
+# The feature set follows the scenario selected above (and thus follows
+# `simp config`). $simp_feature_set selects the data/feature_sets/ layer in
+# hiera.yaml; $simp_scenario remains for the deprecated data/scenarios/ layer
+# and the simp::scenario class parameter, and will be removed with them.
+$simp_feature_set = $simp_scenario
 
 # Map SIMP parameters to NIST Special Publication 800-53, Revision 4
 # See modules/compliance_markup/data/compliance_profiles for more options.

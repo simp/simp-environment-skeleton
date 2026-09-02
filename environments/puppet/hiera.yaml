@@ -85,6 +85,9 @@ hierarchy:
     lookup_key: eyaml_lookup_key
     paths:
     - "simp_config_settings.eyaml"
+    - "feature_sets/%{::simp_feature_set}.eyaml"
+    # DEPRECATED - the scenarios/ layer was renamed to feature_sets/ and this
+    # path will be removed together with the simp::scenario class parameter
     - "scenarios/%{::simp_scenario}.eyaml"
     options:
       pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
@@ -93,4 +96,7 @@ hierarchy:
   - name: SIMP specific data - Please do not modify
     paths:
     - "simp_config_settings.yaml"
+    - "feature_sets/%{::simp_feature_set}.yaml"
+    # DEPRECATED - the scenarios/ layer was renamed to feature_sets/ and this
+    # path will be removed together with the simp::scenario class parameter
     - "scenarios/%{::simp_scenario}.yaml"
