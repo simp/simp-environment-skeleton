@@ -14,8 +14,8 @@ hierarchy:
     lookup_key: eyaml_lookup_key
     paths:
     - "hosts/%{trusted.certname}.eyaml"
-    - "hosts/%{facts.fqdn}.eyaml"
-    - "hosts/%{facts.hostname}.eyaml"
+    - "hosts/%{facts.networking.fqdn}.eyaml"
+    - "hosts/%{facts.networking.hostname}.eyaml"
     options:
       pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
       pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
@@ -23,20 +23,20 @@ hierarchy:
   - name: Per-node data
     paths:
     - "hosts/%{trusted.certname}.yaml"
-    - "hosts/%{facts.fqdn}.yaml"
-    - "hosts/%{facts.hostname}.yaml"
+    - "hosts/%{facts.networking.fqdn}.yaml"
+    - "hosts/%{facts.networking.hostname}.yaml"
 
   - name: Eyaml per domain data
     lookup_key: eyaml_lookup_key
     paths:
-    - "domains/%{facts.domain}.eyaml"
+    - "domains/%{facts.networking.domain}.eyaml"
     options:
       pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
       pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
 
   - name: Per-domain data
     paths:
-    - "domains/%{facts.domain}.yaml"
+    - "domains/%{facts.networking.domain}.yaml"
 
   - name: EYAML per-OS data
     lookup_key: eyaml_lookup_key
