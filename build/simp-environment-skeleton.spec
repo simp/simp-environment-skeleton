@@ -94,6 +94,11 @@ cp -r environments/* %{buildroot}/%{prefix}
 - The `simp_lite` scenario turns off the ssh and libreswan firewall
   integrations, which `simp:defaults` sets directly instead of following
   `simp_options::firewall`
+- Use the structured `networking` facts in `hiera.yaml` and the `site.pp`
+  example; OpenVox 8+ agents don't send the legacy `fqdn`, `hostname` and
+  `domain` facts, so per-host and per-domain data never matched
+- Drop the deprecated `iptables::use_firewalld` setting; firewalld is the
+  `iptables` module's default backend
 
 * Tue Oct 05 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.3.1-1
 - Fix EL8 RPM dependencies
