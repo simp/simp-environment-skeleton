@@ -20,7 +20,6 @@ pupmod::enable_puppet_master: true
 ### Secure SIMP Options ###
 simp_options::auditd: true
 simp_options::firewall: true
-iptables::use_firewalld: true
 simp_options::haveged: true
 simp_options::logrotate: true
 simp_options::pam: true

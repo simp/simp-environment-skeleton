@@ -14,8 +14,8 @@ hierarchy:
     lookup_key: eyaml_lookup_key
     paths:
     - "hosts/%{trusted.certname}.eyaml"
-    - "hosts/%{facts.fqdn}.eyaml"
-    - "hosts/%{facts.hostname}.eyaml"
+    - "hosts/%{facts.networking.fqdn}.eyaml"
+    - "hosts/%{facts.networking.hostname}.eyaml"
     options:
       pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
       pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
@@ -23,20 +23,20 @@ hierarchy:
   - name: Per-node data
     paths:
     - "hosts/%{trusted.certname}.yaml"
-    - "hosts/%{facts.fqdn}.yaml"
-    - "hosts/%{facts.hostname}.yaml"
+    - "hosts/%{facts.networking.fqdn}.yaml"
+    - "hosts/%{facts.networking.hostname}.yaml"
 
   - name: Eyaml per domain data
     lookup_key: eyaml_lookup_key
     paths:
-    - "domains/%{facts.domain}.eyaml"
+    - "domains/%{facts.networking.domain}.eyaml"
     options:
       pkcs7_private_key: /var/lib/puppet/keys/private_key.pkcs7.pem
       pkcs7_public_key: /var/lib/puppet/keys/public_key.pkcs7.pem
 
   - name: Per-domain data
     paths:
-    - "domains/%{facts.domain}.yaml"
+    - "domains/%{facts.networking.domain}.yaml"
 
   - name: EYAML per-OS data
     lookup_key: eyaml_lookup_key
@@ -94,3 +94,13 @@ hierarchy:
     paths:
     - "simp_config_settings.yaml"
     - "scenarios/%{::simp_scenario}.yaml"
+
+  # Compliance profiles from the Compliance Engine (simp/compliance_engine).
+  # Profiles are listed in `compliance_engine::enforcement`; the SIMP
+  # scenarios set it to `simp:defaults`, which restores the SIMP behavior that
+  # modules no longer apply by default.
+  #
+  # This level is last so that any data set above it, including site data in
+  # common.yaml and per-host files, overrides the profiles.
+  - name: SIMP Compliance Engine
+    lookup_key: compliance_engine::enforcement

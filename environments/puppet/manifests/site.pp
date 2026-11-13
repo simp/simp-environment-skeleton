@@ -27,7 +27,7 @@ $compliance_profile = 'nist_800_53_rev4'
 # Place Hiera customizations based on this variable in data/hostgroups/${::hostgroup}.yaml
 #
 # Example hostgroup declaration using a regex match on the hostname:
-#   case $facts['fqdn'] {
+#   case $facts['networking']['fqdn'] {
 #     /dns\d+\.example.domain/:    { $hostgroup = 'dns'     }
 #     /gitlab\d+\.example.domain/: { $hostgroup = 'gitlab'  }
 #     default:                     { $hostgroup = 'default' }
