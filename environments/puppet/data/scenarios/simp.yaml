@@ -24,6 +24,22 @@
 
 simp::scenario: 'simp'
 
+# Compliance profiles to enforce with the Compliance Engine (see hiera.yaml).
+# `simp:defaults` restores the SIMP behavior that modules no longer apply
+# by default.
+#
+# To enforce a DISA STIG profile, list it *before* `simp:defaults`; for scalar
+# values the first-listed profile wins:
+#
+#   compliance_engine::enforcement:
+#     - disa:mac-1:classified
+#     - simp:defaults
+#
+# Setting this key at a higher Hiera level replaces this list; it is not
+# merged.
+compliance_engine::enforcement:
+  - simp:defaults
+
 # SIMP scenario defaults
 simp_options::auditd: true
 simp_options::firewall: true

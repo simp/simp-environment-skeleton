@@ -94,3 +94,13 @@ hierarchy:
     paths:
     - "simp_config_settings.yaml"
     - "scenarios/%{::simp_scenario}.yaml"
+
+  # Compliance profiles from the Compliance Engine (simp/compliance_engine).
+  # Profiles are listed in `compliance_engine::enforcement`; the SIMP
+  # scenarios set it to `simp:defaults`, which restores the SIMP behavior that
+  # modules no longer apply by default.
+  #
+  # This level is last so that any data set above it, including site data in
+  # common.yaml and per-host files, overrides the profiles.
+  - name: SIMP Compliance Engine
+    lookup_key: compliance_engine::enforcement

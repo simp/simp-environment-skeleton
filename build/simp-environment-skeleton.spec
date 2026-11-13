@@ -1,6 +1,6 @@
 Summary: The SIMP Environment Skeleton
 Name: simp-environment-skeleton
-Version: 7.3.1
+Version: 8.0.0
 Release: 1%{?dist}
 # The entire source code is Apache License 2.0 except the following, which are
 # OpenSSL:
@@ -85,6 +85,16 @@ cp -r environments/* %{buildroot}/%{prefix}
 %attr(0755,-,-) %{prefix}/secondary/FakeCA/usergen_nopass.sh
 
 %changelog
+* Fri Nov 13 2026 Steven Pritchard <steve@sicura.us> - 8.0.0-1
+- Add a Compliance Engine level (`compliance_engine::enforcement`) at the
+  bottom of `hiera.yaml`; it requires the simp/compliance_engine module
+- The `simp`, `simp_lite` and `poss` scenarios enforce the `simp:defaults`
+  profile, which restores the SIMP behavior that modules no longer apply by
+  default
+- The `simp_lite` scenario turns off the ssh and libreswan firewall
+  integrations, which `simp:defaults` sets directly instead of following
+  `simp_options::firewall`
+
 * Tue Oct 05 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 7.3.1-1
 - Fix EL8 RPM dependencies
 
