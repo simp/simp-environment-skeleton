@@ -31,3 +31,12 @@ simp::scenario: 'poss'
 # merged.
 compliance_engine::enforcement:
   - simp:defaults
+
+# The ssh and libreswan simp:defaults profiles set their firewall
+# integration to a literal `true`, which would turn on firewalld on a
+# scenario that is meant to start empty. Turn the firewall off and make both
+# follow simp_options::firewall, including on hosts that override that key.
+# The alias only works when the key is set, so this file has to set it.
+simp_options::firewall: false
+ssh::server::conf::firewall: "%{alias('simp_options::firewall')}"
+libreswan::firewall: "%{alias('simp_options::firewall')}"

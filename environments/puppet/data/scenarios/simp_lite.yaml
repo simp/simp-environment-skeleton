@@ -59,9 +59,10 @@ simp_options::ldap: false
 # These settings explicitly turned off
 simp_options::firewall: false
 # The ssh and libreswan simp:defaults profiles set their firewall
-# integration directly instead of following simp_options::firewall
-ssh::server::conf::firewall: false
-libreswan::firewall: false
+# integration to a literal `true`. These two lines make it follow
+# simp_options::firewall instead, including on hosts that override that key.
+ssh::server::conf::firewall: "%{alias('simp_options::firewall')}"
+libreswan::firewall: "%{alias('simp_options::firewall')}"
 
 # Options that are not suggested to be turned on by default:
 simp_options::ipsec: false
